@@ -227,7 +227,7 @@ class Stromboli extends StromboliCore {
 
     return Promise.all(plugins.map(function (plugin) {
       return that.pluginRenderComponent(plugin, component);
-    })).then(function() {
+    })).then(function () {
       return component;
     });
   };
@@ -239,86 +239,77 @@ class Stromboli extends StromboliCore {
     var renderResult = new RenderResult();
     var entry = path.resolve(path.join(component.path, plugin.entry));
 
-    try {
-      that.info('> COMPONENT', component.name, 'IS ABOUT TO BE RENDERED BY PLUGIN', plugin.name);
+    that.info('> COMPONENT', component.name, 'IS ABOUT TO BE RENDERED BY PLUGIN', plugin.name);
 
-      return that.exists(entry).then(
-        function (file) {
-          return plugin.render(file, renderResult).then(
-            function (renderResult) {
-              var promises = [];
-              var output = path.join('dist', component.name);
+    return that.exists(entry).then(
+      function (file) {
+        return plugin.render(file, renderResult).then(
+          function (renderResult) {
+            var promises = [];
+            var output = path.join('dist', component.name);
 
-              renderResult.getDependencies().forEach(function (dependency) {
-                var from = dependency;
-                var to = path.join(output, path.relative(path.resolve('.'), dependency));
+            renderResult.getDependencies().forEach(function (dependency) {
+              var from = dependency;
+              var to = path.join(output, path.relative(path.resolve('.'), dependency));
 
-                that.debug('WILL COPY DEPENDENCY FROM', from, 'TO', to);
+              that.debug('WILL COPY DEPENDENCY FROM', from, 'TO', to);
 
-                promises.push(that.copyFile(from, to));
-              });
+              promises.push(that.copyFile(from, to));
+            });
 
-              renderResult.getBinaries().forEach(function (binary) {
-                var data = binary.data;
-                var to = path.join(output, binary.name);
+            renderResult.getBinaries().forEach(function (binary) {
+              var data = binary.data;
+              var to = path.join(output, binary.name);
 
-                that.debug('WILL WRITE BINARY FROM', data, 'TO', to);
+              that.debug('WILL WRITE BINARY FROM', data, 'TO', to);
 
-                promises.push(that.writeFile(to, data));
-              });
+              promises.push(that.writeFile(to, data));
+            });
 
-              return Promise.all(promises).then(
-                function () {
-                  var endDate = new Date();
+            return Promise.all(promises).then(
+              function () {
+                var endDate = new Date();
 
-                  that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
+                that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
 
-                  var watcher = null;
-                  var files = renderResult.getDependencies();
+                var watcher = null;
+                var files = renderResult.getDependencies();
 
-                  if (!that.componentsWatchers.has(component.name)) {
-                    that.componentsWatchers.set(component.name, new Map());
-                  }
-
-                  var componentWatchers = that.componentsWatchers.get(component.name);
-
-                  if (componentWatchers.has(plugin.name)) {
-                    that.debug('WATCHER FOR COMPONENT', component.name, 'AND PLUGIN', plugin.name, 'WILL BE CLOSED');
-
-                    watcher = componentWatchers.get(plugin.name);
-                    watcher.close();
-                  }
-
-                  that.debug('WATCHER WILL WATCH', files, 'USING PLUGIN', plugin.name);
-
-                  watcher = that.getWatcher(files, function () {
-                    that.pluginRenderComponent(plugin, component)
-                  });
-
-                  componentWatchers.set(plugin.name, watcher);
-
-                  return component;
+                if (!that.componentsWatchers.has(component.name)) {
+                  that.componentsWatchers.set(component.name, new Map());
                 }
-              );
-            },
-            function (err) {
-              log.error('ERROR HERE', err);
 
-              renderResult.addSource(entry, err);
+                var componentWatchers = that.componentsWatchers.get(component.name);
 
-              return true;
-            }
-          );
-        }
-      );
-    }
-    catch (e) {
-      log.error('ERROR HERE', err);
+                if (componentWatchers.has(plugin.name)) {
+                  that.debug('WATCHER FOR COMPONENT', component.name, 'AND PLUGIN', plugin.name, 'WILL BE CLOSED');
 
-      renderResult.addSource(entry, err);
+                  watcher = componentWatchers.get(plugin.name);
+                  watcher.close();
+                }
 
-      return true;
-    }
+                that.debug('WATCHER WILL WATCH', files, 'USING PLUGIN', plugin.name);
+
+                watcher = that.getWatcher([...files], function () {
+                  that.pluginRenderComponent(plugin, component)
+                });
+
+                componentWatchers.set(plugin.name, watcher);
+
+                return component;
+              }
+            );
+          },
+          function (err) {
+            log.error(err);
+
+            renderResult.addSource(entry, err);
+
+            return component;
+          }
+        );
+      }
+    );
   }
 
   /**
@@ -328,9 +319,18 @@ class Stromboli extends StromboliCore {
    * @returns {Promise}
    */
   getWatcher(files, listener) {
+    var that = this;
+
     return chokidar.watch(files, {
-      ignoreInitial: true
-    }).on('all', listener);
+      ignoreInitial: true,
+      awaitWriteFinish: {
+        stabilityThreshold: 100
+      }
+    }).on('all', function (type, file) {
+      that.info(file, type);
+
+      listener.apply(that);
+    });
   };
 }
 
