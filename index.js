@@ -14,6 +14,7 @@ var path = require('path');
 var Promise = require('promise');
 var readDir = Promise.denodeify(fs.readdir);
 var stat = Promise.denodeify(fs.stat);
+var unlink = Promise.denodeify(fs.unlink);
 
 class Stromboli extends StromboliCore {
   constructor() {
@@ -118,18 +119,6 @@ class Stromboli extends StromboliCore {
     );
   };
 
-  stop() {
-    process.exit();
-  };
-
-  restart(configFile) {
-    var that = this;
-
-    log.info('=== STROMBOLI WILL RESTART ===');
-
-    that.start(configFile);
-  };
-
   static checkConfig(config) {
     if (!config) {
       return false;
@@ -232,84 +221,132 @@ class Stromboli extends StromboliCore {
     });
   };
 
+  pluginCleanComponent(plugin, component) {
+    var that = this;
+    var promises = [];
+
+    // close watchers
+    var watcher = null;
+
+    if (that.componentsWatchers.has(component.name)) {
+      var componentWatchers = that.componentsWatchers.get(component.name);
+
+      if (componentWatchers.has(plugin.name)) {
+        that.debug('WATCHER FOR COMPONENT', component.name, 'AND PLUGIN', plugin.name, 'WILL BE CLOSED');
+
+        watcher = componentWatchers.get(plugin.name);
+
+        promises.push(watcher.close());
+      }
+    }
+
+    // clean dependencies
+    if (component.renderResults.has(plugin.name)) {
+      /**
+       *
+       * @type {StromboliRenderResult}
+       */
+      var renderResult = component.renderResults.get(plugin.name);
+      var dependencies = renderResult.getDependencies();
+      var output = path.join('dist', component.name);
+
+      dependencies.forEach(function (dependency) {
+        var to = path.join(output, path.relative(path.resolve('.'), dependency));
+
+        promises.push(unlink(to).then(
+          function () {
+            that.debug(to, 'CLEANED');
+
+            return Promise.resolve();
+          }
+        ));
+      });
+    }
+
+    return Promise.all(promises);
+  };
+
   pluginRenderComponent(plugin, component) {
     var that = this;
     var beginDate = new Date();
 
-    var renderResult = new RenderResult();
-    var entry = path.resolve(path.join(component.path, plugin.entry));
-
     that.info('> COMPONENT', component.name, 'IS ABOUT TO BE RENDERED BY PLUGIN', plugin.name);
 
-    return that.exists(entry).then(
-      function (file) {
-        return plugin.render(file, renderResult).then(
-          function (renderResult) {
-            var promises = [];
-            var output = path.join('dist', component.name);
+    return that.pluginCleanComponent(plugin, component).then(
+      function () {
+        var renderResult = new RenderResult();
+        var entry = path.resolve(path.join(component.path, plugin.entry));
 
-            renderResult.getDependencies().forEach(function (dependency) {
-              var from = dependency;
-              var to = path.join(output, path.relative(path.resolve('.'), dependency));
+        return that.exists(entry).then(
+          function (file) {
+            return plugin.render(file, renderResult).then(
+              function (renderResult) {
+                renderResult.addSource(file);
 
-              that.debug('WILL COPY DEPENDENCY FROM', from, 'TO', to);
+                component.renderResults.set(plugin.name, renderResult);
 
-              promises.push(that.copyFile(from, to));
-            });
+                // write output
+                var promises = [];
+                var output = path.join('dist', component.name);
 
-            renderResult.getBinaries().forEach(function (binary) {
-              var data = binary.data;
-              var to = path.join(output, binary.name);
+                renderResult.getDependencies().forEach(function (dependency) {
+                  var from = dependency;
+                  var to = path.join(output, path.relative(path.resolve('.'), dependency));
 
-              that.debug('WILL WRITE BINARY FROM', data, 'TO', to);
+                  that.debug('WILL COPY DEPENDENCY FROM', from, 'TO', to);
 
-              promises.push(that.writeFile(to, data));
-            });
-
-            return Promise.all(promises).then(
-              function () {
-                var endDate = new Date();
-
-                that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
-
-                var watcher = null;
-                var files = renderResult.getDependencies();
-
-                if (!that.componentsWatchers.has(component.name)) {
-                  that.componentsWatchers.set(component.name, new Map());
-                }
-
-                var componentWatchers = that.componentsWatchers.get(component.name);
-
-                if (componentWatchers.has(plugin.name)) {
-                  that.debug('WATCHER FOR COMPONENT', component.name, 'AND PLUGIN', plugin.name, 'WILL BE CLOSED');
-
-                  watcher = componentWatchers.get(plugin.name);
-                  watcher.close();
-                }
-
-                that.debug('WATCHER WILL WATCH', files, 'USING PLUGIN', plugin.name);
-
-                watcher = that.getWatcher([...files], function () {
-                  that.pluginRenderComponent(plugin, component)
+                  promises.push(that.copyFile(from, to));
                 });
 
-                componentWatchers.set(plugin.name, watcher);
+                renderResult.getBinaries().forEach(function (binary) {
+                  var data = binary.data;
+                  var to = path.join(output, binary.name);
+
+                  that.debug('WILL WRITE BINARY FROM', data, 'TO', to);
+
+                  promises.push(that.writeFile(to, data));
+                });
+
+                return Promise.all(promises).then(
+                  function () {
+                    var endDate = new Date();
+
+                    that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
+                    that.debug(component);
+
+                    var watcher = null;
+                    var dependencies = Array.from(renderResult.getDependencies());
+
+                    if (!that.componentsWatchers.has(component.name)) {
+                      that.componentsWatchers.set(component.name, new Map());
+                    }
+
+                    var componentWatchers = that.componentsWatchers.get(component.name);
+
+                    that.debug('WATCHER WILL WATCH', dependencies, 'USING PLUGIN', plugin.name);
+
+                    watcher = that.getWatcher(dependencies, function () {
+                      that.pluginRenderComponent(plugin, component)
+                    });
+
+                    componentWatchers.set(plugin.name, watcher);
+
+                    return component;
+                  }
+                );
+              },
+              function (err) {
+                log.error(err);
+
+                renderResult.addSource(file, err);
 
                 return component;
               }
             );
-          },
-          function (err) {
-            log.error(err);
-
-            renderResult.addSource(entry, err);
-
-            return component;
           }
         );
       }
-    );
+    )
   }
 
   /**
