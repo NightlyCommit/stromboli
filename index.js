@@ -343,6 +343,9 @@ class Stromboli extends StromboliCore {
                 return component;
               }
             );
+          },
+          function () {
+            return component;
           }
         );
       }
