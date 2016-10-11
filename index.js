@@ -4,7 +4,6 @@ const StromboliCore = require('stromboli-core');
 const Component = require('./lib/component');
 const RenderResult = require('./lib/render-result');
 
-var chokidar = require('chokidar');
 var fs = require('fs');
 var log = require('log-util');
 var merge = require('merge');
@@ -17,12 +16,6 @@ var stat = Promise.denodeify(fs.stat);
 var unlink = Promise.denodeify(fs.unlink);
 
 class Stromboli extends StromboliCore {
-  constructor() {
-    super();
-
-    this.componentsWatchers = new Map();
-  };
-
   /**
    *
    * @param config {Object}
@@ -55,7 +48,6 @@ class Stromboli extends StromboliCore {
     var components = null;
 
     return Promise.all([
-      that.closeWatchers(),
       that.getPlugins(config).then(
         function (results) {
           plugins = results;
@@ -76,45 +68,11 @@ class Stromboli extends StromboliCore {
           );
         })).then(
           function (components) {
-            log.info('=== STROMBOLI IS READY ===');
+            log.info('<', components.length, 'COMPONENTS RENDERED');
 
             return Array.prototype.concat.apply([], components);
           }
         );
-      }
-    );
-  };
-
-  closeWatchers() {
-    var that = this;
-    var promises = [];
-    var closeWatcher = function (watcher) {
-      watcher.close();
-
-      return watcher;
-    };
-
-    var keys = that.componentsWatchers.keys();
-
-    for (var key of keys) {
-      var componentWatchers = that.componentsWatchers.get(key);
-
-      componentWatchers.forEach(function (watcher) {
-        promises.push(closeWatcher(watcher));
-      });
-    }
-
-    that.info('>', 'CLOSING WATCHERS');
-
-    return Promise.all(promises).then(
-      function (watchers) {
-        that.info('<', watchers.length, 'WATCHERS CLOSED');
-        that.debug(watchers);
-
-        that.watchers = [];
-        that.componentsWatchers = new Map();
-
-        return watchers;
       }
     );
   };
@@ -225,21 +183,6 @@ class Stromboli extends StromboliCore {
     var that = this;
     var promises = [];
 
-    // close watchers
-    var watcher = null;
-
-    if (that.componentsWatchers.has(component.name)) {
-      var componentWatchers = that.componentsWatchers.get(component.name);
-
-      if (componentWatchers.has(plugin.name)) {
-        that.debug('WATCHER FOR COMPONENT', component.name, 'AND PLUGIN', plugin.name, 'WILL BE CLOSED');
-
-        watcher = componentWatchers.get(plugin.name);
-
-        promises.push(watcher.close());
-      }
-    }
-
     // clean dependencies
     if (component.renderResults.has(plugin.name)) {
       /**
@@ -278,7 +221,9 @@ class Stromboli extends StromboliCore {
         var entry = path.resolve(path.join(component.path, plugin.entry));
 
         var _renderDone = function (file, renderResult, err) {
-          renderResult.addSource(file, err);
+          if (file) {
+            renderResult.addSource(file, err);
+          }
 
           if (err) {
             // we log the error for convenience
@@ -320,23 +265,6 @@ class Stromboli extends StromboliCore {
               that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
               that.debug(component);
 
-              var watcher = null;
-              var dependencies = Array.from(renderResult.getDependencies());
-
-              if (!that.componentsWatchers.has(component.name)) {
-                that.componentsWatchers.set(component.name, new Map());
-              }
-
-              var componentWatchers = that.componentsWatchers.get(component.name);
-
-              that.debug('WATCHER WILL WATCH', dependencies, 'USING PLUGIN', plugin.name);
-
-              watcher = that.getWatcher(dependencies, function () {
-                that.pluginRenderComponent(plugin, component)
-              });
-
-              componentWatchers.set(plugin.name, watcher);
-
               return component;
             }
           );
@@ -354,33 +282,12 @@ class Stromboli extends StromboliCore {
             );
           },
           function () {
-            return component;
+            return _renderDone(null, renderResult, null);
           }
         );
       }
     )
   }
-
-  /**
-   *
-   * @param files {[String]}
-   * @param listener {Function}
-   * @returns {Promise}
-   */
-  getWatcher(files, listener) {
-    var that = this;
-
-    return chokidar.watch(files, {
-      ignoreInitial: true,
-      awaitWriteFinish: {
-        stabilityThreshold: 100
-      }
-    }).on('all', function (type, file) {
-      that.info(file, type);
-
-      listener.apply(that);
-    });
-  };
 }
 
 module.exports = Stromboli;

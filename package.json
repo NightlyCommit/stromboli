@@ -9,7 +9,6 @@
   },
   "author": "Eric MORAND",
   "dependencies": {
-    "chokidar": "^1.6.0",
     "fs-extra": "^0.30.0",
     "log-util": "^1.1.2",
     "merge": "^1.2.0",
