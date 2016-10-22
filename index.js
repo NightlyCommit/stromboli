@@ -13,7 +13,6 @@ var path = require('path');
 var Promise = require('promise');
 var readDir = Promise.denodeify(fs.readdir);
 var stat = Promise.denodeify(fs.stat);
-var unlink = Promise.denodeify(fs.unlink);
 
 class Stromboli extends StromboliCore {
   /**
@@ -182,114 +181,54 @@ class Stromboli extends StromboliCore {
     });
   };
 
-  pluginCleanComponent(plugin, component) {
-    var that = this;
-    var promises = [];
-
-    // clean dependencies
-    if (component.renderResults.has(plugin.name)) {
-      /**
-       *
-       * @type {StromboliRenderResult}
-       */
-      var renderResult = component.renderResults.get(plugin.name);
-      var dependencies = renderResult.getDependencies();
-      var output = path.join('dist', component.name);
-
-      dependencies.forEach(function (dependency) {
-        var to = path.join(output, path.relative(path.resolve('.'), dependency));
-
-        promises.push(unlink(to).then(
-          function () {
-            that.debug(to, 'CLEANED');
-
-            return Promise.resolve();
-          }
-        ));
-      });
-    }
-
-    return Promise.all(promises);
-  };
-
   pluginRenderComponent(plugin, component) {
     var that = this;
     var beginDate = new Date();
 
     that.info('> COMPONENT', component.name, 'IS ABOUT TO BE RENDERED BY PLUGIN', plugin.name);
 
-    return that.pluginCleanComponent(plugin, component).then(
-      function () {
-        var renderResult = new RenderResult();
-        var entry = path.resolve(path.join(component.path, plugin.entry));
+    var renderResult = new RenderResult();
+    var entry = path.resolve(path.join(component.path, plugin.entry));
 
-        var _renderDone = function (file, renderResult, err) {
-          if (file) {
-            renderResult.addSource(file, err);
-          }
+    var _renderDone = function (file, renderResult, err) {
+      if (file) {
+        renderResult.addSource(file, err);
+      }
 
-          if (err) {
-            // we log the error for convenience
-            log.error(err);
+      if (err) {
+        // we log the error for convenience
+        log.error(err);
 
-            if (err.file) {
-              renderResult.addDependency(err.file);
-            }
-          }
+        if (err.file) {
+          renderResult.addDependency(err.file);
+        }
+      }
 
-          component.renderResults.set(plugin.name, renderResult);
+      component.renderResults.set(plugin.name, renderResult);
 
-          // write output
-          var promises = [];
-          var output = path.join('dist', component.name);
+      var endDate = new Date();
 
-          renderResult.getDependencies().forEach(function (dependency) {
-            var from = dependency;
-            var to = path.join(output, path.relative(path.resolve('.'), dependency));
+      that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
+      that.debug(component);
 
-            that.debug('WILL COPY DEPENDENCY FROM', from, 'TO', to);
+      return component;
+    };
 
-            promises.push(that.copyFile(from, to));
-          });
-
-          renderResult.getBinaries().forEach(function (binary) {
-            var data = binary.data;
-            var to = path.join(output, binary.name);
-
-            that.debug('WILL WRITE BINARY FROM', data, 'TO', to);
-
-            promises.push(that.writeFile(to, data));
-          });
-
-          return Promise.all(promises).then(
-            function () {
-              var endDate = new Date();
-
-              that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
-              that.debug(component);
-
-              return component;
-            }
-          );
-        };
-
-        return that.exists(entry).then(
-          function (file) {
-            return plugin.plugin.render(file, renderResult).then(
-              function (renderResult) {
-                return _renderDone(file, renderResult, null);
-              },
-              function (err) {
-                return _renderDone(file, renderResult, err);
-              }
-            );
+    return that.exists(entry).then(
+      function (file) {
+        return plugin.plugin.render(file, renderResult).then(
+          function (renderResult) {
+            return _renderDone(file, renderResult, null);
           },
-          function () {
-            return _renderDone(null, renderResult, null);
+          function (err) {
+            return _renderDone(file, renderResult, err);
           }
         );
+      },
+      function () {
+        return _renderDone(null, renderResult, null);
       }
-    )
+    );
   }
 }
 
