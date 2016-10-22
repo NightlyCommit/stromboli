@@ -29,7 +29,7 @@ test('get plugins', function (t) {
       t.equal(plugins.length, 2);
       t.equal(plugins[0].name, 'first');
       t.equal(plugins[0].entry, 'index.first');
-      t.equal(plugins[0].plugin.config.test, 'dummy');
+      t.equal(plugins[0].module.config.test, 'dummy');
     },
     function(err) {
       t.fail(err);
