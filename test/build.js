@@ -17,12 +17,12 @@ test('build single component', function (t) {
     {
       name: 'first',
       entry: 'index.first',
-      plugin: new Plugin()
+      module: new Plugin()
     },
     {
       name: 'second',
       entry: 'index.second',
-      plugin: new Plugin()
+      module: new Plugin()
     }
   ];
 
