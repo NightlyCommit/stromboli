@@ -13,9 +13,7 @@
     "log-util": "^1.1.2",
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
-    "mkdirp": "^0.5.1",
-    "promise": "^7.1.1",
-    "stromboli-core": "*"
+    "promise": "^7.1.1"
   },
   "repository": "ericmorand/stromboli",
   "license": "Apache-2.0",

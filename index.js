@@ -1,26 +1,92 @@
 'use strict';
 
-const StromboliCore = require('stromboli-core');
 const Component = require('./lib/component');
 const RenderResult = require('./lib/render-result');
 
-var fs = require('fs');
-var log = require('log-util');
-var merge = require('merge');
-var path = require('path');
+const fs = require('fs');
+const log = require('log-util');
+const merge = require('merge');
+const path = require('path');
 
 // promise support
-var Promise = require('promise');
-var readDir = Promise.denodeify(fs.readdir);
-var stat = Promise.denodeify(fs.stat);
+const Promise = require('promise');
+const fsReadDir = Promise.denodeify(fs.readdir);
+const fsStat = Promise.denodeify(fs.stat);
 
-class Stromboli extends StromboliCore {
+// log support
+const LOG_LEVEL_SILENT = 0;
+const LOG_LEVEL_ERROR = 1;
+const LOG_LEVEL_WARN = 2;
+const LOG_LEVEL_HTTP = 3;
+const LOG_LEVEL_INFO = 4;
+const LOG_LEVEL_VERBOSE = 5;
+const LOG_LEVEL_SILLY = 6;
+
+const logLevels = {
+  'silent': LOG_LEVEL_SILENT,
+  'error': LOG_LEVEL_ERROR,
+  'warn': LOG_LEVEL_WARN,
+  'http': LOG_LEVEL_HTTP,
+  'info': LOG_LEVEL_INFO,
+  'verbose': LOG_LEVEL_VERBOSE,
+  'silly': LOG_LEVEL_SILLY
+};
+
+class Stromboli {
+  constructor() {
+    this.logLevel = LOG_LEVEL_WARN;
+
+    /**
+     *
+     * @param directory
+     * @param componentManifest
+     * @returns {*|Promise.<T>}
+     * @private
+     */
+    this._getComponentsInsideDirectory = function(directory, componentManifest) {
+      var that = this;
+
+      return fsReadDir(directory).then(
+        function (files) {
+          return Promise.all(files.map(function (file) {
+            var absolutePath = path.resolve(path.join(directory, file));
+
+            return fsStat(absolutePath).then(
+              function (statResult) {
+                if (statResult.isDirectory()) {
+                  return that._getComponentsInsideDirectory(absolutePath, componentManifest);
+                }
+                else if (statResult.isFile()) {
+                  if (file == componentManifest) {
+                    var manifest = require(absolutePath);
+                    var component = new Component(manifest.name, path.dirname(absolutePath));
+
+                    return component;
+                  }
+                }
+
+                return false;
+              }
+            );
+          })).then(
+            function (results) {
+              return Array.prototype.concat.apply([], results.filter(function (result) {
+                return (result !== false);
+              }));
+            }
+          )
+        }
+      );
+    };
+  }
+
   /**
    *
    * @param config {Object}
    */
   start(config) {
     var that = this;
+    var pkg = require('./package.json');
 
     that.setLogLevel(process.env.npm_config_loglevel);
 
@@ -33,9 +99,9 @@ class Stromboli extends StromboliCore {
 
     that.debug('CONFIG', config);
 
-    var projectName = config.projectName;
-    var projectVersion = config.projectVersion;
-    var projectDescription = config.projectDescription;
+    var projectName = pkg.name;
+    var projectVersion = pkg.version;
+    var projectDescription = pkg.description;
 
     log.info(('=').repeat(projectDescription.length));
     log.info(projectName);
@@ -67,7 +133,7 @@ class Stromboli extends StromboliCore {
           );
         })).then(
           function (components) {
-            log.info('<', components.length, 'COMPONENTS RENDERED');
+            that.info('<', components.length, 'COMPONENTS RENDERED');
 
             return Array.prototype.concat.apply([], components);
           }
@@ -78,14 +144,6 @@ class Stromboli extends StromboliCore {
 
   static checkConfig(config) {
     if (!config) {
-      return false;
-    }
-
-    if (!config.projectName) {
-      return false;
-    }
-
-    if (!config.projectVersion) {
       return false;
     }
 
@@ -104,7 +162,7 @@ class Stromboli extends StromboliCore {
       return {
         name: key,
         entry: plugin.entry,
-        plugin: new pluginModule(plugin.config)
+        module: new pluginModule(plugin.config)
       };
     })).then(
       function (plugins) {
@@ -133,42 +191,6 @@ class Stromboli extends StromboliCore {
 
       return components;
     });
-  };
-
-  _getComponentsInsideDirectory(directory, componentManifest) {
-    var that = this;
-
-    return readDir(directory).then(
-      function (files) {
-        return Promise.all(files.map(function (file) {
-          var absolutePath = path.resolve(path.join(directory, file));
-
-          return stat(absolutePath).then(
-            function (statResult) {
-              if (statResult.isDirectory()) {
-                return that._getComponentsInsideDirectory(absolutePath, componentManifest);
-              }
-              else if (statResult.isFile()) {
-                if (file == componentManifest) {
-                  var manifest = require(absolutePath);
-                  var component = new Component(manifest.name, path.dirname(absolutePath));
-
-                  return component;
-                }
-              }
-
-              return false;
-            }
-          );
-        })).then(
-          function (results) {
-            return Array.prototype.concat.apply([], results.filter(function (result) {
-              return (result !== false);
-            }));
-          }
-        )
-      }
-    );
   };
 
   buildComponent(component, plugins) {
@@ -216,7 +238,7 @@ class Stromboli extends StromboliCore {
 
     return that.exists(entry).then(
       function (file) {
-        return plugin.plugin.render(file, renderResult).then(
+        return plugin.module.render(file, renderResult).then(
           function (renderResult) {
             return _renderDone(file, renderResult, null);
           },
@@ -229,7 +251,45 @@ class Stromboli extends StromboliCore {
         return _renderDone(null, renderResult, null);
       }
     );
-  }
+  };
+
+  setLogLevel(logLevel) {
+    this.logLevel = logLevels[logLevel];
+  };
+
+  warn() {
+    if (this.logLevel >= LOG_LEVEL_WARN) {
+      log.warn.apply(log, arguments);
+    }
+  };
+
+  info() {
+    if (this.logLevel >= LOG_LEVEL_INFO) {
+      log.info.apply(log, arguments);
+    }
+  };
+
+  debug() {
+    if (this.logLevel >= LOG_LEVEL_VERBOSE) {
+      log.debug.apply(log, arguments);
+    }
+  };
+
+  /**
+   *
+   * @param path {String}
+   * @returns {Promise}
+   */
+  exists(path) {
+    return fsStat(path).then(
+      function () {
+        return path;
+      },
+      function (e) {
+        return Promise.reject(e);
+      }
+    )
+  };
 }
 
 module.exports = Stromboli;
