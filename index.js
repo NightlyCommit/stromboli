@@ -101,9 +101,12 @@ class Stromboli extends StromboliCore {
     return Promise.all(Object.keys(config.plugins).map(function (key) {
       var plugin = config.plugins[key];
       var pluginModule = plugin.module;
-      var pluginEntry = plugin.entry;
 
-      return new pluginModule(plugin.config, key, pluginEntry);
+      return {
+        name: key,
+        entry: plugin.entry,
+        plugin: new pluginModule(plugin.config)
+      };
     })).then(
       function (plugins) {
         that.info('<', plugins.length, 'PLUGINS FETCHED');
@@ -272,7 +275,7 @@ class Stromboli extends StromboliCore {
 
         return that.exists(entry).then(
           function (file) {
-            return plugin.render(file, renderResult).then(
+            return plugin.plugin.render(file, renderResult).then(
               function (renderResult) {
                 return _renderDone(file, renderResult, null);
               },
