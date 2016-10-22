@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap test/*.js --cov"
   },
   "author": "Eric MORAND",
   "dependencies": {
@@ -14,8 +14,12 @@
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "promise": "^7.1.1"
+    "promise": "^7.1.1",
+    "stromboli-core": "*"
   },
   "repository": "ericmorand/stromboli",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "tap": "^7.1.2"
+  }
 }
