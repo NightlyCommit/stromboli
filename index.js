@@ -99,14 +99,10 @@ class Stromboli {
 
     that.debug('CONFIG', config);
 
-    var projectName = pkg.name;
-    var projectVersion = pkg.version;
-    var projectDescription = pkg.description;
+    var projectDescription = pkg.name + ' - ' + pkg.version;
 
     log.info(('=').repeat(projectDescription.length));
-    log.info(projectName);
     log.info(projectDescription);
-    log.info(projectVersion);
     log.info(('=').repeat(projectDescription.length));
 
     var plugins = null;
