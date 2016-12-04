@@ -91,7 +91,7 @@ class Stromboli {
     that.setLogLevel(process.env.npm_config_loglevel);
 
     // fetch config
-    config = merge.recursive(require('./defaults.js'), config);
+    config = merge.recursive({}, require('./defaults.js'), config);
 
     if (!Stromboli.checkConfig(config)) {
       throw 'Invalid config file passed as parameter';
