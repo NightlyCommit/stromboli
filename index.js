@@ -215,7 +215,12 @@ class Stromboli {
 
       if (err) {
         // we log the error for convenience
-        log.error(err);
+        if (err.message) {
+          log.error(err.message);
+        }
+        else {
+          log.error(err);
+        }
 
         if (err.file) {
           renderResult.addDependency(err.file);
