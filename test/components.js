@@ -10,7 +10,7 @@ test('get components', function (t) {
 
   return stromboli.getComponents('test/components', 'component.json').then(
     function(components) {
-      t.equal(components.length, 2);
+      t.equal(components.length, 3);
 
       var component = components[0];
 
