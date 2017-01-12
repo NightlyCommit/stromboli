@@ -115,6 +115,7 @@ class Stromboli {
       return {
         name: key,
         entry: plugin.entry,
+        output: plugin.output,
         module: new pluginModule(plugin.config)
       };
     })).then(
@@ -199,7 +200,7 @@ class Stromboli {
 
     return that.exists(entry).then(
       function (file) {
-        return plugin.module.render(file, renderResult).then(
+        return plugin.module.render(file, renderResult, plugin.output).then(
           function (renderResult) {
             return _renderDone(file, renderResult, null);
           },
