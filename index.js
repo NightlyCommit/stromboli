@@ -7,10 +7,10 @@ const fs = require('fs');
 const log = require('log-util');
 const merge = require('merge');
 const path = require('path');
+const finder = require('fs-finder');
 
 // promise support
 const Promise = require('promise');
-const fsReadDir = Promise.denodeify(fs.readdir);
 const fsStat = Promise.denodeify(fs.stat);
 
 // log support
@@ -35,49 +35,6 @@ const logLevels = {
 class Stromboli {
   constructor() {
     this.logLevel = LOG_LEVEL_WARN;
-
-    /**
-     *
-     * @param directory
-     * @param componentManifest
-     * @returns {*|Promise.<T>}
-     * @private
-     */
-    this._getComponentsInsideDirectory = function(directory, componentManifest) {
-      var that = this;
-
-      return fsReadDir(directory).then(
-        function (files) {
-          return Promise.all(files.map(function (file) {
-            var absolutePath = path.resolve(path.join(directory, file));
-
-            return fsStat(absolutePath).then(
-              function (statResult) {
-                if (statResult.isDirectory()) {
-                  return that._getComponentsInsideDirectory(absolutePath, componentManifest);
-                }
-                else if (statResult.isFile()) {
-                  if (file == componentManifest) {
-                    var manifest = require(absolutePath);
-                    var component = new Component(manifest.name, path.dirname(absolutePath));
-
-                    return component;
-                  }
-                }
-
-                return false;
-              }
-            );
-          })).then(
-            function (results) {
-              return Array.prototype.concat.apply([], results.filter(function (result) {
-                return (result !== false);
-              }));
-            }
-          )
-        }
-      );
-    };
   }
 
   /**
@@ -176,17 +133,20 @@ class Stromboli {
 
     that.info('> FETCHING COMPONENTS');
 
-    return that._getComponentsInsideDirectory(directory, componentManifest).then(function (results) {
-      that.debug(results);
+    return new Promise(function (fulfill, reject) {
+      finder.from(directory).findFiles(componentManifest, function (files) {
+          var components = [];
 
-      var components = Array.prototype.concat.apply([], results.filter(function (result) {
-        return (result !== false);
-      }));
+          files.forEach(function (file) {
+            var manifest = require(file);
+            var component = new Component(manifest.name, path.dirname(file));
 
-      that.info('<', components.length, 'COMPONENTS FETCHED');
-      that.debug(components);
+            components.push(component);
+          });
 
-      return components;
+          fulfill(components);
+        }
+      );
     });
   };
 

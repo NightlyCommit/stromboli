@@ -10,6 +10,7 @@
   "author": "Eric MORAND",
   "dependencies": {
     "fs-extra": "^0.30.0",
+    "fs-finder": "^1.8.1",
     "log-util": "^1.1.2",
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
