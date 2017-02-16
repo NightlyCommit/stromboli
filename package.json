@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "pretest": "npm prune && npm update",
     "test": "tap test/*.js --cov"
   },
   "author": "Eric MORAND",
@@ -19,6 +20,7 @@
   "repository": "ericmorand/stromboli",
   "license": "Apache-2.0",
   "devDependencies": {
+    "sinon": "^1.17.7",
     "tap": "^7.1.2"
   }
 }

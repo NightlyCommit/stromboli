@@ -1,12 +1,13 @@
 const Stromboli = require('../');
 const StromboliComponent = require('../lib/component');
-const test = require('tap').test;
+const tap = require('tap');
 const path = require('path');
 const fs = require('fs');
+const sinon = require('sinon');
 
 const Plugin = require('./plugins/plugin');
 
-test('build single component', function (t) {
+tap.test('build single component', function (t) {
   var stromboli = new Stromboli();
 
   t.plan(11);
@@ -33,7 +34,7 @@ test('build single component', function (t) {
   ];
 
   return stromboli.buildComponent(component, plugins).then(
-    function(component) {
+    function (component) {
       t.type(component.renderResults, 'Map');
       t.equal(Array.from(component.renderResults.keys()).length, 3);
 
@@ -62,8 +63,62 @@ test('build single component', function (t) {
       t.equal(binaries.length, 1);
       t.equal(binaries[0].name, 'index-again.second.bin');
     },
-    function(err) {
+    function (err) {
       t.fail(err);
     }
   );
+});
+
+tap.test('build with error', function (test) {
+  let componentPath = 'test/build/single';
+  let stromboli = new Stromboli();
+  let component = new StromboliComponent('my-component', componentPath);
+
+  stromboli.setLogLevel('warn');
+
+  test.beforeEach(function(done) {
+    sinon.stub(stromboli.logger, 'error');
+
+    done();
+  });
+
+  test.afterEach(function(done) {
+    stromboli.logger.error.restore();
+
+    done();
+  });
+
+  let executeTest = function(Plugin, wanted) {
+    return function(subtest) {
+      let plugins = [
+        {
+          name: 'error',
+          entry: 'index.first',
+          module: new Plugin()
+        }
+      ];
+
+      return stromboli.buildComponent(component, plugins).then(
+        function (component) {
+          let renderResult = component.renderResults.get('error');
+
+          subtest.equal(renderResult.source.file, path.resolve(path.join(componentPath, 'index.first')));
+          subtest.same(renderResult.source.error, wanted);
+          subtest.equal(stromboli.logger.error.callCount, 1);
+        },
+        function (err) {
+          subtest.fail(err);
+        }
+      )
+    }
+  };
+
+  test.plan(3);
+
+  test.test('error as message', executeTest(require('./plugins/error'), 'Dummy error'));
+  test.test('error with message', executeTest(require('./plugins/error-with-message'), {message: 'Dummy error'}));
+  test.test('error with file', executeTest(require('./plugins/error-with-file'), {
+    file: 'dummy',
+    message: 'Dummy error'
+  }));
 });
