@@ -40,7 +40,7 @@ test('build single component', function (t) {
       var binaries = null;
       var firstResult = component.renderResults.get('first');
 
-      binaries = firstResult.getBinaries();
+      binaries = firstResult.binaries;
 
       t.type(binaries, 'Array');
       t.equal(binaries.length, 1);
@@ -48,7 +48,7 @@ test('build single component', function (t) {
 
       var secondResult = component.renderResults.get('second');
 
-      binaries = secondResult.getBinaries();
+      binaries = secondResult.binaries;
 
       t.type(binaries, 'Array');
       t.equal(binaries.length, 1);
@@ -56,7 +56,7 @@ test('build single component', function (t) {
 
       var secondAgainResult = component.renderResults.get('second-again');
 
-      binaries = secondAgainResult.getBinaries();
+      binaries = secondAgainResult.binaries;
 
       t.type(binaries, 'Array');
       t.equal(binaries.length, 1);

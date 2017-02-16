@@ -6,18 +6,25 @@ class Plugin {
     this.config = config || {};
   }
 
-  render(file, renderResult, output) {
+  render(file, output) {
     var ext = path.extname(file);
 
     if (!output) {
       output = 'index' + ext + '.bin';
     }
 
-    renderResult.addBinary(output, 'data');
-    renderResult.addDependency(file);
-    renderResult.addDependency(path.resolve('test/build/single/index' + ext + '.dep'));
-
-    return Promise.resolve(renderResult);
+    return Promise.resolve({
+      binaries: [
+        {
+          name: output,
+          data: 'data'
+        }
+      ],
+      dependencies: [
+        file,
+        path.resolve('test/build/single/index' + ext + '.dep')
+      ]
+    });
   };
 }
 
