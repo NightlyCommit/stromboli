@@ -1,7 +1,6 @@
 'use strict';
 
 const Component = require('./lib/component');
-const RenderResult = require('./lib/render-result');
 
 const fs = require('fs');
 const log = require('log-util');
@@ -166,12 +165,40 @@ class Stromboli {
 
     that.info('> COMPONENT', component.name, 'IS ABOUT TO BE RENDERED BY PLUGIN', plugin.name);
 
-    var renderResult = new RenderResult();
     var entry = path.resolve(path.join(component.path, plugin.entry));
 
-    var _renderDone = function (file, renderResult, err) {
-      if (file) {
-        renderResult.addSource(file, err);
+    var _renderDone = function (file, pluginRenderResult, err) {
+      let renderResult = {
+        source: {
+          file: null,
+          error: null
+        },
+        dependencies: new Set(),
+        binaries: []
+      };
+
+      // source
+      renderResult.source.file = file;
+      renderResult.source.error = err;
+
+      // dependencies
+      let addDependency = function(dependency) {
+        if (!renderResult.dependencies.has(dependency)) {
+          renderResult.dependencies.add(dependency);
+        }
+      };
+
+      if (pluginRenderResult && pluginRenderResult.dependencies) {
+        pluginRenderResult.dependencies.forEach(function(dependency) {
+          addDependency(dependency);
+        });
+      }
+
+      // binaries
+      if (pluginRenderResult && pluginRenderResult.binaries) {
+        pluginRenderResult.binaries.forEach(function(binary) {
+          renderResult.binaries.push(binary);
+        });
       }
 
       if (err) {
@@ -184,7 +211,7 @@ class Stromboli {
         }
 
         if (err.file) {
-          renderResult.addDependency(err.file);
+          addDependency(err.file);
         }
       }
 
@@ -200,17 +227,17 @@ class Stromboli {
 
     return that.exists(entry).then(
       function (file) {
-        return plugin.module.render(file, renderResult, plugin.output).then(
+        return plugin.module.render(file, plugin.output).then(
           function (renderResult) {
             return _renderDone(file, renderResult, null);
           },
           function (err) {
-            return _renderDone(file, renderResult, err);
+            return _renderDone(file, null, err);
           }
         );
       },
       function () {
-        return _renderDone(null, renderResult, null);
+        return _renderDone(null, null, null);
       }
     );
   };
