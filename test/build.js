@@ -88,11 +88,11 @@ tap.test('build with error', function (test) {
     done();
   });
 
-  let executeTest = function(Plugin, wanted) {
+  let executeTest = function(Plugin, wanted, dependencyCount) {
     return function(subtest) {
       let plugins = [
         {
-          name: 'error',
+          name: 'plugin',
           entry: 'index.first',
           module: new Plugin()
         }
@@ -100,10 +100,10 @@ tap.test('build with error', function (test) {
 
       return stromboli.buildComponent(component, plugins).then(
         function (component) {
-          let renderResult = component.renderResults.get('error');
+          let renderResult = component.renderResults.get('plugin');
 
-          subtest.equal(renderResult.source.file, path.resolve(path.join(componentPath, 'index.first')));
-          subtest.same(renderResult.source.error, wanted);
+          subtest.same(renderResult.error, wanted);
+          subtest.same(renderResult.dependencies.size, dependencyCount);
           subtest.equal(stromboli.logger.error.callCount, 1);
         },
         function (err) {
@@ -115,10 +115,14 @@ tap.test('build with error', function (test) {
 
   test.plan(3);
 
-  test.test('error as message', executeTest(require('./plugins/error'), 'Dummy error'));
-  test.test('error with message', executeTest(require('./plugins/error-with-message'), {message: 'Dummy error'}));
+  test.test('error as message', executeTest(require('./plugins/error'), 'Dummy error', 0));
+
+  test.test('error with message', executeTest(require('./plugins/error-with-message'), {
+      message: 'Dummy error'
+  }, 0));
+
   test.test('error with file', executeTest(require('./plugins/error-with-file'), {
     file: 'dummy',
     message: 'Dummy error'
-  }));
+  }, 1));
 });

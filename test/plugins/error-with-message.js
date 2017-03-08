@@ -8,7 +8,9 @@ class Plugin {
 
   render(file, output) {
     return Promise.reject({
-      message: 'Dummy error'
+      error: {
+        message: 'Dummy error'
+      }
     });
   };
 }
