@@ -22,6 +22,7 @@ class Plugin {
       ],
       dependencies: [
         file,
+        file, // we force duplicate dependency to ensure that Stromboli deduplicate them
         path.resolve('test/build/single/index' + ext + '.dep')
       ]
     });

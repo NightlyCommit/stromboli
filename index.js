@@ -160,19 +160,21 @@ class Stromboli {
 
     var entry = path.resolve(path.join(component.path, plugin.entry));
 
-    var _renderDone = function (file, pluginRenderResult, err) {
+    var _renderDone = function (file, pluginRenderResult) {
       let renderResult = {
-        source: {
-          file: null,
-          error: null
-        },
+        source: null,
         dependencies: new Set(),
-        binaries: []
+        binaries: [],
+        error: null
       };
 
       // source
-      renderResult.source.file = file;
-      renderResult.source.error = err;
+      renderResult.source = file;
+
+      // error
+      if (pluginRenderResult && pluginRenderResult.error) {
+        renderResult.error = pluginRenderResult.error;
+      }
 
       // dependencies
       let addDependency = function(dependency) {
@@ -193,6 +195,8 @@ class Stromboli {
           renderResult.binaries.push(binary);
         });
       }
+
+      let err = renderResult.error;
 
       if (err) {
         // we log the error for convenience
@@ -222,15 +226,15 @@ class Stromboli {
       function (file) {
         return plugin.module.render(file, plugin.output).then(
           function (renderResult) {
-            return _renderDone(file, renderResult, null);
+            return _renderDone(file, renderResult);
           },
-          function (err) {
-            return _renderDone(file, null, err);
+          function (renderResult) {
+            return _renderDone(file, renderResult);
           }
         );
       },
       function () {
-        return _renderDone(null, null, null);
+        return _renderDone(null, null);
       }
     );
   };
