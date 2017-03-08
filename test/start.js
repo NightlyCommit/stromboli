@@ -9,9 +9,9 @@ const Plugin = require('./plugins/plugin');
 test('start', function (t) {
   var stromboli = new Stromboli();
 
-  t.plan(1);
+  stromboli.setLogLevel('silent');
 
-  //var component = new StromboliComponent('my-component', 'test/build/single');
+  t.plan(1);
 
   var plugins = {
     first: {

@@ -3,7 +3,6 @@
 const Component = require('./lib/component');
 
 const fs = require('fs');
-const log = require('log-util');
 const merge = require('merge');
 const path = require('path');
 const finder = require('fs-finder');
@@ -33,7 +32,8 @@ const logLevels = {
 
 class Stromboli {
   constructor() {
-    this.logLevel = LOG_LEVEL_WARN;
+    this.setLogLevel(process.env.npm_config_loglevel);
+    this.logger = require('log-util');
   }
 
   /**
@@ -44,22 +44,16 @@ class Stromboli {
     var that = this;
     var pkg = require('./package.json');
 
-    that.setLogLevel(process.env.npm_config_loglevel);
-
     // fetch config
     config = merge.recursive({}, require('./defaults.js'), config);
-
-    if (!Stromboli.checkConfig(config)) {
-      throw 'Invalid config file passed as parameter';
-    }
 
     that.debug('CONFIG', config);
 
     var projectDescription = pkg.name + ' - ' + pkg.version;
 
-    log.info(('=').repeat(projectDescription.length));
-    log.info(projectDescription);
-    log.info(('=').repeat(projectDescription.length));
+    this.warn(('=').repeat(projectDescription.length));
+    this.warn(projectDescription);
+    this.warn(('=').repeat(projectDescription.length));
 
     var plugins = null;
     var components = null;
@@ -92,14 +86,6 @@ class Stromboli {
         );
       }
     );
-  };
-
-  static checkConfig(config) {
-    if (!config) {
-      return false;
-    }
-
-    return true;
   };
 
   getPlugins(config) {
@@ -146,7 +132,14 @@ class Stromboli {
           fulfill(components);
         }
       );
-    });
+    }).then(
+      function(components) {
+        that.info('<', components.length, 'COMPONENTS FETCHED');
+        that.debug(components);
+
+        return components;
+      }
+    );
   };
 
   buildComponent(component, plugins) {
@@ -204,10 +197,10 @@ class Stromboli {
       if (err) {
         // we log the error for convenience
         if (err.message) {
-          log.error(err.message);
+          that.error(err.message);
         }
         else {
-          log.error(err);
+          that.error(err);
         }
 
         if (err.file) {
@@ -248,20 +241,24 @@ class Stromboli {
 
   warn() {
     if (this.logLevel >= LOG_LEVEL_WARN) {
-      log.warn.apply(log, arguments);
+      this.logger.warn.apply(this.logger, arguments);
     }
   };
 
   info() {
     if (this.logLevel >= LOG_LEVEL_INFO) {
-      log.info.apply(log, arguments);
+      this.logger.info.apply(this.logger, arguments);
     }
   };
 
   debug() {
     if (this.logLevel >= LOG_LEVEL_VERBOSE) {
-      log.debug.apply(log, arguments);
+      this.logger.debug.apply(this.logger, arguments);
     }
+  };
+
+  error() {
+    this.logger.error.apply(this.logger, arguments);
   };
 
   /**
