@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "pretest": "npm prune && npm update",
     "test": "tap test/*.js --cov"
   },
   "author": "Eric MORAND",
   "dependencies": {
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^2.0.0",
     "fs-finder": "^1.8.1",
     "log-util": "^1.1.2",
     "merge": "^1.2.0",
@@ -19,6 +20,7 @@
   "repository": "ericmorand/stromboli",
   "license": "Apache-2.0",
   "devDependencies": {
+    "sinon": "^1.17.7",
     "tap": "^7.1.2"
   }
 }
