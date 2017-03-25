@@ -122,7 +122,7 @@ tap.test('build with error', function (test) {
   }, 0));
 
   test.test('error with file', executeTest(require('./plugins/error-with-file'), {
-    file: 'dummy',
+    file: 'bar',
     message: 'Dummy error'
-  }, 1));
+  }, 2));
 });
