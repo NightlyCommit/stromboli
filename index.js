@@ -206,10 +206,6 @@ class Stromboli {
         else {
           that.error(err);
         }
-
-        if (err.file) {
-          addDependency(err.file);
-        }
       }
 
       component.renderResults.set(plugin.name, renderResult);

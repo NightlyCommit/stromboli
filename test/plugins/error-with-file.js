@@ -7,12 +7,18 @@ class Plugin {
   }
 
   render(file, output) {
-    return Promise.reject({
+    let renderResult = {
+      dependencies: [
+        'foo',
+        'bar'
+      ],
       error: {
-        file: 'dummy',
+        file: 'bar',
         message: 'Dummy error'
       }
-    });
+    };
+
+    return Promise.reject(renderResult);
   };
 }
 
