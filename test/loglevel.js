@@ -1,4 +1,4 @@
-const Stromboli = require('../');
+const Stromboli = require('../src');
 const tap = require('tap');
 const fs = require('fs');
 const sinon = require('sinon');

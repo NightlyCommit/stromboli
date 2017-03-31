@@ -20,10 +20,14 @@ class Plugin {
           data: 'data'
         }
       ],
-      dependencies: [
+      sourceDependencies: [
         file,
         file, // we force duplicate dependency to ensure that Stromboli deduplicate them
-        path.resolve('test/build/single/index' + ext + '.dep')
+        path.resolve('test/build/single/index' + ext + '.dep.src')
+      ],
+      binaryDependencies: [
+        path.resolve('test/build/single/index' + ext + '.dep.bin'),
+        path.resolve('test/build/single/index' + ext + '.dep.bin') // we force duplicate dependency to ensure that Stromboli deduplicate them
       ]
     });
   };
