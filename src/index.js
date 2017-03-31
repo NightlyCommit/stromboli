@@ -42,10 +42,10 @@ class Stromboli {
    */
   start(config) {
     var that = this;
-    var pkg = require('./package.json');
+    var pkg = require('../package.json');
 
     // fetch config
-    config = merge.recursive({}, require('./defaults.js'), config);
+    config = merge.recursive({}, require('../defaults.js'), config);
 
     that.debug('CONFIG', config);
 
@@ -163,7 +163,8 @@ class Stromboli {
     var _renderDone = function (file, pluginRenderResult) {
       let renderResult = {
         source: null,
-        dependencies: new Set(),
+        binaryDependencies: [],
+        sourceDependencies: [],
         binaries: [],
         error: null
       };
@@ -176,18 +177,39 @@ class Stromboli {
         renderResult.error = pluginRenderResult.error;
       }
 
-      // dependencies
-      let addDependency = function(dependency) {
-        if (!renderResult.dependencies.has(dependency)) {
-          renderResult.dependencies.add(dependency);
+      // source dependencies
+      let sourceDependencies = new Set();
+
+      let addSourceDependency = function(dependency) {
+        if (!sourceDependencies.has(dependency)) {
+          sourceDependencies.add(dependency);
         }
       };
 
-      if (pluginRenderResult && pluginRenderResult.dependencies) {
-        pluginRenderResult.dependencies.forEach(function(dependency) {
-          addDependency(dependency);
+      if (pluginRenderResult && pluginRenderResult.sourceDependencies) {
+        pluginRenderResult.sourceDependencies.forEach(function(dependency) {
+          addSourceDependency(dependency);
         });
       }
+
+      renderResult.sourceDependencies = [...sourceDependencies];
+
+      // binary dependencies
+      let binaryDependencies = new Set();
+
+      let addBinaryDependency = function(dependency) {
+        if (!binaryDependencies.has(dependency)) {
+          binaryDependencies.add(dependency);
+        }
+      };
+
+      if (pluginRenderResult && pluginRenderResult.binaryDependencies) {
+        pluginRenderResult.binaryDependencies.forEach(function(dependency) {
+          addBinaryDependency(dependency);
+        });
+      }
+
+      renderResult.binaryDependencies = [...binaryDependencies];
 
       // binaries
       if (pluginRenderResult && pluginRenderResult.binaries) {

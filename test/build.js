@@ -1,5 +1,5 @@
-const Stromboli = require('../');
-const StromboliComponent = require('../lib/component');
+const Stromboli = require('../src');
+const StromboliComponent = require('../src/lib/component');
 const tap = require('tap');
 const path = require('path');
 const fs = require('fs');
@@ -9,8 +9,6 @@ const Plugin = require('./plugins/plugin');
 
 tap.test('build single component', function (t) {
   var stromboli = new Stromboli();
-
-  t.plan(11);
 
   var component = new StromboliComponent('my-component', 'test/build/single');
 
@@ -39,7 +37,23 @@ tap.test('build single component', function (t) {
       t.equal(Array.from(component.renderResults.keys()).length, 3);
 
       var binaries = null;
+      let sourceDependencies = null;
+      let binaryDependencies = null;
+
       var firstResult = component.renderResults.get('first');
+
+      sourceDependencies = firstResult.sourceDependencies;
+
+      t.same(sourceDependencies.sort(), [
+        path.resolve('test/build/single/index.first'),
+        path.resolve('test/build/single/index.first.dep.src')
+      ].sort());
+
+      binaryDependencies = firstResult.binaryDependencies;
+
+      t.same(binaryDependencies.sort(), [
+        path.resolve('test/build/single/index.first.dep.bin')
+      ].sort());
 
       binaries = firstResult.binaries;
 
@@ -49,6 +63,19 @@ tap.test('build single component', function (t) {
 
       var secondResult = component.renderResults.get('second');
 
+      sourceDependencies = secondResult.sourceDependencies;
+
+      t.same(sourceDependencies.sort(), [
+        path.resolve('test/build/single/index.second'),
+        path.resolve('test/build/single/index.second.dep.src')
+      ].sort());
+
+      binaryDependencies = secondResult.binaryDependencies;
+
+      t.same(binaryDependencies.sort(), [
+        path.resolve('test/build/single/index.second.dep.bin')
+      ].sort());
+
       binaries = secondResult.binaries;
 
       t.type(binaries, 'Array');
@@ -57,11 +84,26 @@ tap.test('build single component', function (t) {
 
       var secondAgainResult = component.renderResults.get('second-again');
 
+      sourceDependencies = secondAgainResult.sourceDependencies;
+
+      t.same(sourceDependencies.sort(), [
+        path.resolve('test/build/single/index.second'),
+        path.resolve('test/build/single/index.second.dep.src')
+      ].sort());
+
+      binaryDependencies = secondAgainResult.binaryDependencies;
+
+      t.same(binaryDependencies.sort(), [
+        path.resolve('test/build/single/index.second.dep.bin')
+      ].sort());
+
       binaries = secondAgainResult.binaries;
 
       t.type(binaries, 'Array');
       t.equal(binaries.length, 1);
       t.equal(binaries[0].name, 'index-again.second.bin');
+
+      t.end();
     },
     function (err) {
       t.fail(err);
@@ -103,7 +145,7 @@ tap.test('build with error', function (test) {
           let renderResult = component.renderResults.get('plugin');
 
           subtest.same(renderResult.error, wanted);
-          subtest.same(renderResult.dependencies.size, dependencyCount);
+          subtest.same(renderResult.sourceDependencies.length, dependencyCount);
           subtest.equal(stromboli.logger.error.callCount, 1);
         },
         function (err) {

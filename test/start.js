@@ -1,5 +1,4 @@
-const Stromboli = require('../');
-const StromboliComponent = require('../lib/component');
+const Stromboli = require('../src');
 const test = require('tap').test;
 const path = require('path');
 const fs = require('fs');

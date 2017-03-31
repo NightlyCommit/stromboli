@@ -8,7 +8,7 @@ class Plugin {
 
   render(file, output) {
     let renderResult = {
-      dependencies: [
+      sourceDependencies: [
         'foo',
         'bar'
       ],
