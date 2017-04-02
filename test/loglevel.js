@@ -5,8 +5,20 @@ const sinon = require('sinon');
 
 const Plugin = require('./plugins/plugin');
 
+class Builder extends Stromboli {
+  start(config) {
+    let self = this;
+
+    return super.start(config).then(
+      function() {
+        self.warn('Done');
+      }
+    );
+  }
+}
+
 tap.test('loglevel', function (test) {
-  let stromboli = new Stromboli();
+  let stromboli = new Builder();
 
   test.beforeEach(function(done) {
     sinon.stub(stromboli.logger, 'warn');
@@ -53,7 +65,7 @@ tap.test('loglevel', function (test) {
   };
 
   test.test('silent', loglevelTest('silent', 0, 0, 0));
-  test.test('warn', loglevelTest('warn', 3, 0, 0));
-  test.test('info', loglevelTest('info', 3, 7, 0));
-  test.test('verbose', loglevelTest('verbose', 3, 7, 4));
+  test.test('warn', loglevelTest('warn', 1, 0, 0));
+  test.test('info', loglevelTest('info', 1, 7, 0));
+  test.test('verbose', loglevelTest('verbose', 1, 7, 4));
 });

@@ -42,18 +42,11 @@ class Stromboli {
    */
   start(config) {
     var that = this;
-    var pkg = require('../package.json');
 
     // fetch config
     config = merge.recursive({}, require('../defaults.js'), config);
 
     that.debug('CONFIG', config);
-
-    var projectDescription = pkg.name + ' - ' + pkg.version;
-
-    this.warn(('=').repeat(projectDescription.length));
-    this.warn(projectDescription);
-    this.warn(('=').repeat(projectDescription.length));
 
     var plugins = null;
     var components = null;
