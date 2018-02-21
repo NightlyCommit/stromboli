@@ -145,6 +145,13 @@ class Stromboli {
     });
   };
 
+  /**
+   * Render the component passed as parameter with the plugin passed as parameter and resolve with the render result.
+   *
+   * @param plugin
+   * @param component
+   * @returns {*|Promise<any>}
+   */
   pluginRenderComponent(plugin, component) {
     var that = this;
     var beginDate = new Date();
@@ -230,7 +237,7 @@ class Stromboli {
       that.info('< COMPONENT', component.name, 'HAS BEEN RENDERED BY PLUGIN', plugin.name, 'IN', endDate - beginDate + 'MS');
       that.debug(component);
 
-      return component;
+      return renderResult;
     };
 
     return that.exists(entry).then(

@@ -21,6 +21,6 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "sinon": "^1.17.7",
-    "tap": "^7.1.2"
+    "tap": "^11.1.1"
   }
 }
