@@ -29,13 +29,6 @@ class BarProcessor {
    */
   process(buildRequest, buildResponse) {
 
-    let binary = buildResponse.binaries[0];
-
-    buildResponse.addBinary(binary.name, new Buffer('bar1data'));
-
-    console.warn('CALLED 2');
-
-    return Promise.resolve();
   }
 }
 
@@ -107,6 +100,32 @@ tap.test('Stromboli', (test) => {
       let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
         fooProcessor,
         barProcessor
+      ]);
+
+      stromboli.buildComponentWithPlugin(component, plugin).then(
+        () => {
+          test.true(flag);
+
+          test.end();
+        }
+      );
+    });
+
+    test.test('this is defined inside "process" function', (test) => {
+      let fooProcessor = new FooProcessor();
+
+      let flag = null;
+
+      sinon.stub(fooProcessor, 'process').callsFake(function (buildRequest, buildResponse) {
+        return new Promise((resolve, reject) => {
+          flag = (this === fooProcessor);
+
+          resolve();
+        });
+      });
+
+      let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
+        fooProcessor
       ]);
 
       stromboli.buildComponentWithPlugin(component, plugin).then(

@@ -50,7 +50,7 @@ export class Stromboli {
         let buildResponse = new StromboliBuildResponse();
 
         let processFunctions: Function[] = plugin.processors.map((processor) => {
-            return processor.process;
+            return processor.process.bind(processor);
         });
 
         return processFunctions.reduce((accumulator, currentValue) => {
