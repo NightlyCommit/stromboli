@@ -1,26 +1,33 @@
 {
   "name": "stromboli",
   "version": "0.15.0",
-  "description": "Another HTML template builder",
-  "main": "src/index.js",
+  "description": "Simple and efficient component builder",
+  "main": "lib/index.js",
   "scripts": {
+    "clean": "node tasks/clean.js",
+    "prelib": "npm run clean",
+    "prepublish": "npm run lib -- --sourceMap false",
+    "pretest": "npm run lib",
     "start": "node index.js",
-    "pretest": "npm prune && npm update",
-    "test": "tap test/*.js --cov --100"
+    "lib": "tsc --project .",
+    "test": "npm run fastest",
+    "fastest": "tape 'test/**/*.js' | tap-mocha-reporter spec",
+    "cover": "nyc npm t",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Eric MORAND",
-  "dependencies": {
-    "fs-extra": "^2.0.0",
-    "fs-finder": "^1.8.1",
-    "log-util": "^1.1.2",
-    "merge": "^1.2.0",
-    "minimist": "^1.2.0",
-    "promise": "^7.1.1"
-  },
+  "dependencies": {},
   "repository": "ericmorand/stromboli",
   "license": "Apache-2.0",
   "devDependencies": {
-    "sinon": "^1.17.7",
-    "tap": "^11.1.1"
+    "@types/node": "^10.5.8",
+    "coveralls": "^3.0.2",
+    "fs-extra": "^7.0.0",
+    "nyc": "^12.0.2",
+    "sinon": "^6.1.5",
+    "tap": "^11.1.5",
+    "tap-mocha-reporter": "^3.0.7",
+    "tape": "^4.9.1",
+    "typescript": "^3.0.1"
   }
 }
