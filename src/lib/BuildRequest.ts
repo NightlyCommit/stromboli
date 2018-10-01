@@ -2,8 +2,8 @@ import {StromboliComponent} from "./Component";
 import {StromboliPlugin} from "./Plugin";
 
 export class StromboliBuildRequest {
-    _component: StromboliComponent;
-    _plugin: StromboliPlugin;
+    protected _component: StromboliComponent;
+    protected _plugin: StromboliPlugin;
 
     constructor(component: StromboliComponent, plugin: StromboliPlugin) {
         this._component = component;

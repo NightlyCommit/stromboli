@@ -59,32 +59,6 @@ export class StromboliBuilder {
             });
         }, Promise.resolve()).then(
             () => {
-                // deduplicate binaries
-                let binaries: Map<string, StromboliBinary> = new Map();
-
-                let addBinary = (binary: StromboliBinary) => {
-                    binaries.set(binary.name, binary);
-                };
-
-                for (let binary of buildResponse.binaries) {
-                    addBinary(binary);
-                }
-
-                // deduplicate dependencies
-                let dependencies = new Set();
-
-                let addDependency = (dependency: string) => {
-                    if (!dependencies.has(dependency)) {
-                        dependencies.add(dependency);
-                    }
-                };
-
-                for (let dependency of buildResponse.dependencies) {
-                    addDependency(dependency);
-                }
-
-                buildResponse = new StromboliBuildResponse([...binaries.values()], [...dependencies], buildResponse.errors);
-
                 return buildResponse;
             }
         );

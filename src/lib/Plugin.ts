@@ -1,10 +1,10 @@
 import {StromboliProcessorInterface} from "./ProcessorInterface";
 
 export class StromboliPlugin {
-    _name: string;
-    _entry: string;
-    _output: string;
-    _processors: StromboliProcessorInterface[];
+    protected _name: string;
+    protected _entry: string;
+    protected _output: string;
+    protected _processors: StromboliProcessorInterface[];
 
     /**
      * @param name {string}

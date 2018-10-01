@@ -1,8 +1,8 @@
 export class StromboliBinary {
-    private _name: string;
-    private _data: Buffer;
-    private _map: Buffer;
-    private _dependencies: string[];
+    protected _name: string;
+    protected _data: Buffer;
+    protected _map: Buffer;
+    protected _dependencies: string[];
 
     /**
      * @param name {string}

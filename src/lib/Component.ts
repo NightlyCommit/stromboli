@@ -1,6 +1,6 @@
 export class StromboliComponent {
-    _name: string;
-    _path: string;
+    protected _name: string;
+    protected _path: string;
 
     /**
      * @param name {string}
