@@ -1,4 +1,4 @@
-const {StromboliComponent} = require('../../../lib/Stromboli/Component');
+const {StromboliComponent} = require('../../../../build/lib/Component');
 const tap = require('tap');
 
 tap.test('Component', (test) => {
