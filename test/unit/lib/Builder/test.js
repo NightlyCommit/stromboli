@@ -66,7 +66,7 @@ tap.test('Stromboli', (test) => {
 
     stromboli.buildComponentWithPlugin(component, plugin).then(
       (result) => {
-        test.equals(result.binaries.length, 2);
+        test.equals(result.binaries.length, 3);
         test.equals(result.dependencies.length, 3);
         test.equals(result.errors.length, 1);
 

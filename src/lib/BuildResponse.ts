@@ -2,9 +2,9 @@ import {StromboliError} from "./Error";
 import {StromboliBinary} from "./Binary";
 
 export class StromboliBuildResponse {
-    private _binaries: StromboliBinary[];
-    private _dependencies: string[];
-    private _errors: StromboliError[];
+    protected _binaries: StromboliBinary[];
+    protected _dependencies: string[];
+    protected _errors: StromboliError[];
 
     constructor(binaries: StromboliBinary[] = [], dependencies: string[] = [], errors: StromboliError[] = []) {
         this._binaries = binaries;
@@ -16,7 +16,9 @@ export class StromboliBuildResponse {
      * @param {string} value
      */
     addDependency(value: string) {
-        this._dependencies.push(value);
+        if (!this._dependencies.includes(value)) {
+            this._dependencies.push(value);
+        }
     }
 
     /**
