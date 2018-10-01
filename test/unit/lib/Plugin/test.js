@@ -1,4 +1,4 @@
-const {StromboliPlugin} = require('../../../lib/Stromboli/Plugin');
+const {StromboliPlugin} = require('../../../../build/lib/Plugin');
 const tap = require('tap');
 
 class FooProcessor {

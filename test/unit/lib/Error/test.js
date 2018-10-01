@@ -1,4 +1,4 @@
-const {StromboliError} = require('../../../lib/Stromboli/Error');
+const {StromboliError} = require('../../../../build/lib/Error');
 const tap = require('tap');
 
 tap.test('Error', (test) => {

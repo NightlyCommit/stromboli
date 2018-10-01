@@ -1,15 +1,6 @@
-# Created by .ignore support plugin (hsz.mobi)
-/.editorconfig
-/.gitignore
-/.idea
-/.npmignore
-/.nyc_output
-/.nycrc
-/.coveralls.yml
-/.travis.yml
-/coverage
-/package-lock.json
-/src
-/tasks
-/test
-/tsconfig.json
+*
+!/lib/**
+!/index.d.ts
+!/index.js
+!/LICENSE
+!/README.md

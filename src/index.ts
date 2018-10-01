@@ -1,17 +1,7 @@
-import {StromboliBinary} from "./Stromboli/Binary";
-import {StromboliComponent} from "./Stromboli/Component";
-import {StromboliBuildRequest} from "./Stromboli/BuildRequest";
-import {StromboliBuildResponse} from "./Stromboli/BuildResponse";
-import {StromboliError} from "./Stromboli/Error";
-import {StromboliPlugin} from "./Stromboli/Plugin";
-import {Stromboli} from "./Stromboli/Stromboli";
-
-export = {
-    StromboliBinary: StromboliBinary,
-    StromboliComponent: StromboliComponent,
-    StromboliBuildRequest: StromboliBuildRequest,
-    StromboliBuildResponse: StromboliBuildResponse,
-    StromboliError: StromboliError,
-    StromboliPlugin: StromboliPlugin,
-    Stromboli: Stromboli
-};
+export {StromboliBinary} from "./lib/Binary";
+export {StromboliBuilder} from "./lib/Builder";
+export {StromboliBuildRequest} from "./lib/BuildRequest";
+export {StromboliBuildResponse} from "./lib/BuildResponse";
+export {StromboliComponent} from "./lib/Component";
+export {StromboliError} from "./lib/Error";
+export {StromboliPlugin} from "./lib/Plugin";

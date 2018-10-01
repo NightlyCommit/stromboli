@@ -1,5 +1,5 @@
-const {Stromboli} = require('../../../lib/Stromboli/Stromboli');
-const {StromboliComponent, StromboliPlugin} = require('../../../lib');
+const {StromboliBuilder} = require('../../../../build/lib/Builder');
+const {StromboliComponent, StromboliPlugin} = require('../../../../build');
 const tap = require('tap');
 const sinon = require('sinon');
 
@@ -48,7 +48,7 @@ class ErrorProcessor {
 
 tap.test('Stromboli', (test) => {
   test.test('constructor', (test) => {
-    let stromboli = new Stromboli();
+    let stromboli = new StromboliBuilder();
 
     test.true(stromboli);
 
@@ -56,7 +56,7 @@ tap.test('Stromboli', (test) => {
   });
 
   test.test('buildComponentWithPlugin', (test) => {
-    let stromboli = new Stromboli();
+    let stromboli = new StromboliBuilder();
 
     let component = new StromboliComponent('foo', 'bar');
     let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
@@ -139,7 +139,7 @@ tap.test('Stromboli', (test) => {
   });
 
   test.test('buildComponent', (test) => {
-    let stromboli = new Stromboli();
+    let stromboli = new StromboliBuilder();
 
     let component = new StromboliComponent('foo', '/foo');
 
@@ -163,7 +163,7 @@ tap.test('Stromboli', (test) => {
   });
 
   test.test('start', (test) => {
-    let stromboli = new Stromboli();
+    let stromboli = new StromboliBuilder();
 
     let components = [
       new StromboliComponent('foo', '/foo'),

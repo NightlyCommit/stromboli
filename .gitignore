@@ -1,6 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
-lib
+build
 npm-debug.log
 node_modules
 coverage

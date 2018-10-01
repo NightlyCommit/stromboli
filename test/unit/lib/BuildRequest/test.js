@@ -1,5 +1,5 @@
-const {StromboliBuildRequest} = require('../../../lib/Stromboli/BuildRequest');
-const {StromboliComponent, StromboliPlugin} = require('../../../lib/index');
+const {StromboliBuildRequest} = require('../../../../build/lib/BuildRequest');
+const {StromboliComponent, StromboliPlugin} = require('../../../../build');
 
 const tap = require('tap');
 

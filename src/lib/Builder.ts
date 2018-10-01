@@ -4,7 +4,7 @@ import {StromboliBuildRequest} from "./BuildRequest";
 import {StromboliBuildResponse} from "./BuildResponse";
 import {StromboliBinary} from "./Binary";
 
-export class Stromboli {
+export class StromboliBuilder {
     /**
      *
      * @param {StromboliComponent[]} components
