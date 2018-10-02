@@ -1,18 +1,19 @@
 import {StromboliProcessorInterface} from "./ProcessorInterface";
+import {StromboliBuildRequest} from "./BuildRequest";
 
 export class StromboliPlugin {
     protected _name: string;
     protected _entry: string;
-    protected _output: string;
+    protected _output: string | {(b: StromboliBuildRequest): string};
     protected _processors: StromboliProcessorInterface[];
 
     /**
      * @param name {string}
      * @param entry {string}
-     * @param output {string}
+     * @param output {string | {(b: StromboliBuildRequest): string}}
      * @param processors {StromboliProcessorInterface[]}
      */
-    constructor(name: string, entry: string, output: string, processors: StromboliProcessorInterface[]) {
+    constructor(name: string, entry: string, output: string | {(b: StromboliBuildRequest): string}, processors: StromboliProcessorInterface[]) {
         this._name = name;
         this._entry = entry;
         this._output = output;
@@ -40,7 +41,7 @@ export class StromboliPlugin {
     /**
      * Returns the plugin output.
      *
-     * @returns {string}
+     * @returns {string | {(b: StromboliBuildRequest): string}}
      */
     get output() {
         return this._output;
