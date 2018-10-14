@@ -1,53 +1,38 @@
-import {StromboliPlugin} from "./Plugin";
-import {StromboliComponent} from "./Component";
-import {StromboliBuildRequest} from "./BuildRequest";
-import {StromboliBuildResponse} from "./BuildResponse";
-import {StromboliBinary} from "./Binary";
+import {ComponentInterface} from "./ComponentInterface";
+import {BuildRequest} from "./BuildRequest";
+import {Plugin} from "./Plugin";
 
-export class StromboliBuilder {
+export class Builder {
     /**
+     * Build the component passed as parameters with the plugins passed as parameter and resolve with the processed build requests.
      *
-     * @param {StromboliComponent[]} components
-     * @param {StromboliPlugin[]} plugins
-     * @return {Promise<StromboliComponent[]>}
+     * @param component {ComponentInterface}
+     * @param plugins {Plugin[]}
+     * @return {Promise<Map<string, BuildRequest>>}
      */
-    start(components: StromboliComponent[], plugins: StromboliPlugin[]) {
-        return Promise.all(components.map((component) => {
-            return this.buildComponent(component, plugins);
-        }));
-    };
-
-    /**
-     * Build the component passed as parameters with the plugins passed as parameter and resolve with the build responses.
-     *
-     * @param component {StromboliComponent}
-     * @param plugins {StromboliPlugin[]}
-     * @return {Promise<Map<string, StromboliBuildResponse>>}
-     */
-    buildComponent(component: StromboliComponent, plugins: StromboliPlugin[]) {
-        let responses: Map<string, StromboliBuildResponse> = new Map();
+    buildComponent(component: ComponentInterface, plugins: Plugin[]) {
+        let requests: Map<string, BuildRequest> = new Map();
 
         return Promise.all(plugins.map((plugin) => {
             return this.buildComponentWithPlugin(component, plugin).then(
-                function (buildResponse: StromboliBuildResponse) {
-                    responses.set(plugin.name, buildResponse);
+                function (buildRequest: BuildRequest) {
+                    requests.set(plugin.name, buildRequest);
                 }
             );
         })).then(() => {
-            return responses;
+            return requests;
         });
     };
 
     /**
-     * Build the component passed as parameter with the plugin passed as parameter and resolve with the build result.
+     * Build the component passed as parameter with the plugin passed as parameter and resolve with the processed build request.
      *
-     * @param component {StromboliComponent}
-     * @param plugin {StromboliPlugin}
-     * @returns {Promise<StromboliBuildResponse>}
+     * @param component {ComponentInterface}
+     * @param plugin {Plugin}
+     * @returns {Promise<BuildRequest>}
      */
-    buildComponentWithPlugin(component: StromboliComponent, plugin: StromboliPlugin): Promise<StromboliBuildResponse> {
-        let buildRequest = new StromboliBuildRequest(component, plugin);
-        let buildResponse = new StromboliBuildResponse();
+    buildComponentWithPlugin(component: ComponentInterface, plugin: Plugin): Promise<BuildRequest> {
+        let buildRequest = new BuildRequest(component, plugin);
 
         let processFunctions: Function[] = plugin.processors.map((processor) => {
             return processor.process.bind(processor);
@@ -55,11 +40,11 @@ export class StromboliBuilder {
 
         return processFunctions.reduce((accumulator, currentValue) => {
             return accumulator.then(() => {
-                return currentValue(buildRequest, buildResponse);
+                return currentValue(buildRequest);
             });
         }, Promise.resolve()).then(
             () => {
-                return buildResponse;
+                return buildRequest;
             }
         );
     };

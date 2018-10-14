@@ -1,8 +1,9 @@
-# Created by .ignore support plugin (hsz.mobi)
-.idea/
 build
-npm-debug.log
-node_modules
+cjs
 coverage
-.nyc_output
+es
+node_modules
+.idea
 .coveralls.yml
+.nyc_output
+types

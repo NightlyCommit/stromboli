@@ -1,9 +1,9 @@
-const {StromboliError} = require('../../../../build/lib/Error');
-const tap = require('tap');
+const {Error} = require('../../../../build/cjs/lib/Error');
+const tape = require('tape');
 
-tap.test('Error', (test) => {
+tape.test('Error', (test) => {
   test.test('constructor', (test) => {
-    let error = new StromboliError('foo', 'bar');
+    let error = new Error('foo', 'bar');
 
     test.equals(error.file, 'foo');
     test.equals(error.message, 'bar');

@@ -1,7 +1,7 @@
-const {StromboliBinary} = require('../../../../build/lib/Binary');
-const tap = require('tap');
+const {Binary: StromboliBinary} = require('../../../../build/cjs/lib/Binary');
+const tape = require('tape');
 
-tap.test('Binary', (test) => {
+tape.test('Binary', (test) => {
   let data = Buffer.from('bar');
   let map = Buffer.from('map');
   let dependencies = ['foo'];

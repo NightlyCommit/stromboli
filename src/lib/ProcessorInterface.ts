@@ -1,13 +1,11 @@
 /* istanbul ignore next */
 
-import {StromboliBuildResponse} from "./BuildResponse";
-import {StromboliBuildRequest} from "./BuildRequest";
+import {BuildRequest} from "./BuildRequest";
 
-export interface StromboliProcessorInterface {
+export interface ProcessorInterface {
     /**
-     * @param {StromboliBuildRequest} request
-     * @param {StromboliBuildResponse} response
+     * @param {BuildRequest} request
      * @return {Promise<void>}
      */
-    process(request: StromboliBuildRequest, response: StromboliBuildResponse): Promise<void>;
+    process(request: BuildRequest): Promise<void>;
 }

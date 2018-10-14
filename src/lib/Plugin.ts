@@ -1,58 +1,21 @@
-import {StromboliProcessorInterface} from "./ProcessorInterface";
-import {StromboliBuildRequest} from "./BuildRequest";
+import {ProcessorInterface} from "./ProcessorInterface";
 
-export class StromboliPlugin {
-    protected _name: string;
-    protected _entry: string;
-    protected _output: string | {(b: StromboliBuildRequest): string};
-    protected _processors: StromboliProcessorInterface[];
+export class Plugin {
+    readonly name: string;
+    readonly entry: string;
+    readonly output: string;
+    readonly processors: ProcessorInterface[];
 
     /**
      * @param name {string}
      * @param entry {string}
-     * @param output {string | {(b: StromboliBuildRequest): string}}
-     * @param processors {StromboliProcessorInterface[]}
+     * @param output {string}
+     * @param processors {ProcessorInterface[]}
      */
-    constructor(name: string, entry: string, output: string | {(b: StromboliBuildRequest): string}, processors: StromboliProcessorInterface[]) {
-        this._name = name;
-        this._entry = entry;
-        this._output = output;
-        this._processors = processors;
-    }
-
-    /**
-     * Returns the plugin name.
-     *
-     * @returns {string}
-     */
-    get name() {
-        return this._name;
-    }
-
-    /**
-     * Returns the plugin entry.
-     *
-     * @returns {string}
-     */
-    get entry() {
-        return this._entry;
-    }
-
-    /**
-     * Returns the plugin output.
-     *
-     * @returns {string | {(b: StromboliBuildRequest): string}}
-     */
-    get output() {
-        return this._output;
-    }
-
-    /**
-     * Returns the plugin processors.
-     *
-     * @returns {StromboliProcessorInterface[]}
-     */
-    get processors() {
-        return this._processors;
+    constructor(name: string, entry: string, output: string, processors: ProcessorInterface[]) {
+        this.name = name;
+        this.entry = entry;
+        this.output = output;
+        this.processors = processors;
     }
 }

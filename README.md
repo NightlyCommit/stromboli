@@ -1,5 +1,6 @@
 # Stromboli [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage percentage][coveralls-image]][coveralls-url]
-> The simple and efficient component builder
+
+> The simple yet efficient component builder
 
 ## Installation
 
@@ -7,41 +8,56 @@
 npm install stromboli --save-dev
 ```
 
-## Getting to know Stromboli
-
-Stromboli is not opinionated.
-
 ## Basic usage
 
 ```
-const {Stromboli, StromboliComponent, StromboliPlugin} = require('stromboli');
+const {Builder, Plugin, ComponentFilesystem} = require('stromboli');
 
-let components = [
-  new StromboliComponent('bar', 'foo/bar')
-];
+let component = new ComponentFilesystem('bar');
 
 let plugins = [
-  new StromboliPlugin('foo_plugin', 'foo.entry', 'foo.output', [
-    {
-      process(buildRequest, buildResponse) {
-        let file = path.join(buildRequest.component.path, buildRequest.plugin.entry);
-
-        buildResponse.addDependency(file);
-        buildResponse.addBinary(buildRequest.plugin.output, new Buffer('data'), new Buffer('map'));
-      }
-    }
-  ])
+    new Plugin('foo_plugin', 'foo.entry', 'foo.output', [
+        {
+            process(buildRequest) {
+                return buildRequest.component.getSource(buildRequest.plugin.entry).then(
+                    (source) => {
+                        buildRequest.addDependency(source.path);
+                        buildRequest.addBinary(buildRequest.plugin.output, Buffer.from('binary data'), Buffer.from('source map'), ['a binary dependency', 'another binary dependency']);
+                    }
+                )
+            }
+        }
+    ])
 ];
 
-let builder = new Stromboli();
+let builder = new Builder();
 
-builder.start(components, plugins).then(
-  (buildResponses) => {
-    for (let buildResponse of buildResponses) {
-        console.log(buildResponse);
+builder.buildComponent(component, plugins).then(
+    (buildRequests) => {
+        for (let [pluginName, buildRequest] of buildRequests) {
+            console.log(buildRequest);
+        }
     }
-  }
 );
+
+/**
+ BuildRequest {
+  component: ComponentFilesystem { path: 'bar' },
+  plugin:
+   Plugin {
+     name: 'foo_plugin',
+     entry: 'foo.entry',
+     output: 'foo.output',
+     processors: [ [Object] ] },
+  binaries:
+   [ Binary {
+       name: 'foo.output',
+       data: <Buffer 62 69 6e 61 72 79 20 64 61 74 61>,
+       map: <Buffer 73 6f 75 72 63 65 20 6d 61 70>,
+       dependencies: [Array] } ],
+  dependencies: [ 'bar/foo.entry' ],
+  errors: [] }
+*/
     
 ```
 
@@ -49,11 +65,16 @@ builder.start(components, plugins).then(
 
 ### Binary
 
+### Builder
+
+* `buildComponent(component: ComponentInterface, plugins: Plugin[])`
+* `buildComponentWithPlugin(component: ComponentInterface, plugin: plugin)`
+
 ### BuildRequest
 
-### BuildResponse
+### ComponentFilesystem
 
-### Component
+### ComponentInterface
 
 ### Error
 
@@ -61,11 +82,7 @@ builder.start(components, plugins).then(
 
 ### ProcessorInterface
 
-### Stromboli
-
-* `buildComponent(component, plugins)`
-* `buildComponentWithPlugin(component, plugin)`
-* `start(components, plugins)`
+### Source
 
 ## License
 

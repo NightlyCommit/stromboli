@@ -1,21 +1,20 @@
-const {StromboliBuilder} = require('../../../../build/lib/Builder');
-const {StromboliComponent, StromboliPlugin} = require('../../../../build');
-const tap = require('tap');
+const {Builder} = require('../../../../build/cjs/lib/Builder');
+const {ComponentFilesystem, Plugin} = require('../../../../build/cjs');
+const tape = require('tape');
 const sinon = require('sinon');
 
 class FooProcessor {
   /**
-   * @param {StromboliBuildRequest} buildRequest
-   * @param {StromboliBuildResponse} buildResponse
-   * @return {Promise<StromboliBuildResponse>}
+   * @param {BuildRequest} buildRequest
+   * @return {Promise<void>}
    */
-  process(buildRequest, buildResponse) {
-    buildResponse.addBinary('bin1', new Buffer('bin1data'));
-    buildResponse.addBinary('bin2', new Buffer('bin2data'), new Buffer('bin2map'));
+  process(buildRequest) {
+    buildRequest.addBinary('bin1', new Buffer('bin1data'));
+    buildRequest.addBinary('bin2', new Buffer('bin2data'), new Buffer('bin2map'));
 
-    buildResponse.addDependency('dep1');
-    buildResponse.addDependency('dep2');
-    buildResponse.addDependency('dep3');
+    buildRequest.addDependency('dep1');
+    buildRequest.addDependency('dep2');
+    buildRequest.addDependency('dep3');
 
     return Promise.resolve();
   }
@@ -23,32 +22,41 @@ class FooProcessor {
 
 class BarProcessor {
   /**
-   * @param {StromboliBuildRequest} buildRequest
-   * @param {StromboliBuildResponse} buildResponse
-   * @return {Promise<StromboliBuildResponse>}
+   * @param {BuildRequest} buildRequest
+   * @return {Promise<void>}
    */
-  process(buildRequest, buildResponse) {
+  process(buildRequest) {
 
   }
 }
 
 class ErrorProcessor {
   /**
-   * @param {StromboliBuildRequest} buildRequest
-   * @param {StromboliBuildResponse} buildResponse
+   * @param {BuildRequest} buildRequest
+   * @return {Promise<void>}
    */
-  process(buildRequest, buildResponse) {
-    buildResponse.addBinary('bin1', new Buffer('bin1data'));
+  process(buildRequest) {
+    buildRequest.addBinary('bin1', new Buffer('bin1data'));
 
-    buildResponse.addDependency('dep1');
+    buildRequest.addDependency('dep1');
 
-    buildResponse.addError('err1message', 'err1file');
+    buildRequest.addError('err1file', 'err1message');
   }
 }
 
-tap.test('Stromboli', (test) => {
+class ErrorProcessor2 {
+  /**
+   * @param {BuildRequest} buildRequest
+   * @return {Promise<void>}
+   */
+  process(buildRequest) {
+    buildRequest.addError('err2file', 'err2message');
+  }
+}
+
+tape.test('Builder', (test) => {
   test.test('constructor', (test) => {
-    let stromboli = new StromboliBuilder();
+    let stromboli = new Builder();
 
     test.true(stromboli);
 
@@ -56,19 +64,24 @@ tap.test('Stromboli', (test) => {
   });
 
   test.test('buildComponentWithPlugin', (test) => {
-    let stromboli = new StromboliBuilder();
+    let stromboli = new Builder();
 
-    let component = new StromboliComponent('foo', 'bar');
-    let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
+    let component = new ComponentFilesystem('foo');
+    let plugin = new Plugin('plugin1', 'foo.entry', 'foo.output', [
       new FooProcessor(),
-      new ErrorProcessor()
+      new ErrorProcessor(),
+      new ErrorProcessor2()
     ]);
 
     stromboli.buildComponentWithPlugin(component, plugin).then(
       (result) => {
-        test.equals(result.binaries.length, 3);
-        test.equals(result.dependencies.length, 3);
-        test.equals(result.errors.length, 1);
+        test.equals(result.binaries.length, 2, 'binaries should be set and deduped');
+        test.equals(result.binaries[0].name, 'bin2', 'binaries should be ordered');
+        test.equals(result.binaries[1].name, 'bin1', 'binaries should be ordered');
+        test.equals(result.dependencies.length, 3, 'dependencies should be set and deduped');
+        test.equals(result.errors.length, 2, 'errors should be set');
+        test.equals(result.errors[0].file, 'err1file', 'errors should be ordered');
+        test.equals(result.errors[1].file, 'err2file', 'errors should be ordered');
 
         test.end();
       }
@@ -81,8 +94,8 @@ tap.test('Stromboli', (test) => {
       let value = null;
       let flag = false;
 
-      sinon.stub(fooProcessor, 'process').callsFake((buildRequest, buildResponse) => {
-        return new Promise((resolve, reject) => {
+      sinon.stub(fooProcessor, 'process').callsFake(() => {
+        return new Promise((resolve) => {
           setTimeout(() => {
             value = 'foo';
 
@@ -91,13 +104,13 @@ tap.test('Stromboli', (test) => {
         });
       });
 
-      sinon.stub(barProcessor, 'process').callsFake((buildRequest, buildResponse) => {
+      sinon.stub(barProcessor, 'process').callsFake(() => {
         flag = (value === 'foo');
 
         return Promise.resolve();
       });
 
-      let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
+      let plugin = new Plugin('plugin1', 'foo.entry', 'foo.output', [
         fooProcessor,
         barProcessor
       ]);
@@ -116,15 +129,15 @@ tap.test('Stromboli', (test) => {
 
       let flag = null;
 
-      sinon.stub(fooProcessor, 'process').callsFake(function (buildRequest, buildResponse) {
-        return new Promise((resolve, reject) => {
+      sinon.stub(fooProcessor, 'process').callsFake(function () {
+        return new Promise((resolve) => {
           flag = (this === fooProcessor);
 
           resolve();
         });
       });
 
-      let plugin = new StromboliPlugin('plugin1', 'foo.entry', 'foo.output', [
+      let plugin = new Plugin('plugin1', 'foo.entry', 'foo.output', [
         fooProcessor
       ]);
 
@@ -139,49 +152,22 @@ tap.test('Stromboli', (test) => {
   });
 
   test.test('buildComponent', (test) => {
-    let stromboli = new StromboliBuilder();
-
-    let component = new StromboliComponent('foo', '/foo');
+    let builder = new Builder();
+    let component = new ComponentFilesystem('/foo');
 
     let plugins = [
-      new StromboliPlugin('plugin1', 'foo.entry1', 'foo.output1', [
+      new Plugin('plugin1', 'foo.entry1', 'foo.output1', [
         new FooProcessor()
       ]),
-      new StromboliPlugin('plugin2', 'foo.entry2', 'foo.output2', [
+      new Plugin('plugin2', 'foo.entry2', 'foo.output2', [
         new ErrorProcessor()
       ])
     ];
 
-    stromboli.buildComponent(component, plugins).then(
+    builder.buildComponent(component, plugins).then(
       (results) => {
         test.true(results.has('plugin1'));
         test.true(results.has('plugin2'));
-
-        test.end();
-      }
-    );
-  });
-
-  test.test('start', (test) => {
-    let stromboli = new StromboliBuilder();
-
-    let components = [
-      new StromboliComponent('foo', '/foo'),
-      new StromboliComponent('bar', '/bar')
-    ];
-
-    let plugins = [
-      new StromboliPlugin('plugin1', 'foo.entry1', 'foo.output1', [
-        new FooProcessor()
-      ]),
-      new StromboliPlugin('plugin2', 'foo.entry2', 'foo.output2', [
-        new ErrorProcessor()
-      ])
-    ];
-
-    stromboli.start(components, plugins).then(
-      (results) => {
-        test.equals(results.length, 2);
 
         test.end();
       }
