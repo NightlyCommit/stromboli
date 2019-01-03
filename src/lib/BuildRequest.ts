@@ -1,5 +1,5 @@
 import {ComponentInterface} from "./ComponentInterface";
-import {Plugin} from "./Plugin";
+import {PluginEOHandler, Plugin} from "./Plugin";
 import {Error} from "./Error";
 import {Binary} from "./Binary";
 
@@ -16,6 +16,36 @@ export class BuildRequest {
         this.binaries = [];
         this.dependencies = [];
         this.errors = [];
+    }
+
+    /**
+     * @returns string
+     */
+    get entry(): string {
+        let entry = null;
+
+        if (typeof this.plugin.entry === 'function') {
+            entry = (this.plugin.entry as PluginEOHandler)(this.component);
+        } else {
+            entry = this.plugin.entry;
+        }
+
+        return entry;
+    }
+
+    /**
+     * @returns string
+     */
+    get output(): string {
+        let output = null;
+
+        if (typeof this.plugin.output === 'function') {
+            output = (this.plugin.output as PluginEOHandler)(this.component);
+        } else {
+            output = this.plugin.output;
+        }
+
+        return output;
     }
 
     /**
