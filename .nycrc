@@ -4,9 +4,9 @@
     "branches": 100,
     "functions": 100,
     "extension": [
-      ".js"
+      ".ts"
     ],
-    "include": "build/cjs",
+    "include": "src",
     "reporter": [
       "text-summary",
       "html"

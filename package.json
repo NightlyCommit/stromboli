@@ -7,7 +7,6 @@
   "types": "types/index.d.ts",
   "scripts": {
     "clean": "rimraf build es cjs types",
-    "pretest": "npm run build",
     "prepack": "npm run clean && npm run build:cjs -- && npm run build:es -- && mv build/** .",
     "postpack": "npm run clean",
     "start": "node index.js",
@@ -15,7 +14,7 @@
     "build:cjs": "tsc --project . --module commonjs --outDir build/cjs --declaration true --declarationDir build/types",
     "build:es": "tsc --project . --module es6 --outDir build/es",
     "test": "npm run fastest",
-    "fastest": "tape 'test/**/test.js' | tap-bail | tap-spec",
+    "fastest": "ts-node node_modules/tape/bin/tape 'test/**/test.ts' | tap-bail | tap-spec",
     "cover": "rimraf .nyc_output coverage && nyc npm t",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -29,6 +28,8 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/sinon": "^7.0.3",
+    "@types/tape": "^4.2.33",
     "coveralls": "^3.0.2",
     "fs-extra": "^7.0.0",
     "nyc": "^12.0.2",
@@ -39,6 +40,7 @@
     "tap-mocha-reporter": "^3.0.7",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
+    "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   }
 }
