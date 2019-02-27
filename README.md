@@ -90,7 +90,7 @@ Apache-2.0 © [Eric MORAND]()
 
 [npm-image]: https://badge.fury.io/js/stromboli.svg
 [npm-url]: https://npmjs.org/package/stromboli
-[travis-image]: https://travis-ci.org/ericmorand/stromboli.svg?branch=master
-[travis-url]: https://travis-ci.org/ericmorand/stromboli
-[coveralls-image]: https://coveralls.io/repos/github/ericmorand/stromboli/badge.svg
-[coveralls-url]: https://coveralls.io/github/ericmorand/stromboli
+[travis-image]: https://travis-ci.org/NightlyCommit/stromboli.svg?branch=master
+[travis-url]: https://travis-ci.org/NightlyCommit/stromboli
+[coveralls-image]: https://coveralls.io/repos/github/NightlyCommit/stromboli/badge.svg
+[coveralls-url]: https://coveralls.io/github/NightlyCommit/stromboli
