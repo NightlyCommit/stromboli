@@ -1,4 +1,4 @@
-import {Binary, BuildRequest, ComponentFilesystem, Plugin} from '../../../../src';
+import {Binary, BuildRequest, ComponentFilesystem, ComponentInterface, Plugin, Source} from '../../../../src';
 
 import * as tape from 'tape';
 
@@ -97,6 +97,26 @@ tape('BuildRequest', (test) => {
         });
 
         test.end();
+    });
+
+    test.test('source', (test) => {
+        class CustomComponent implements ComponentInterface {
+            getSource(entry: string): Promise<Source> {
+                return Promise.resolve(new Source(Buffer.from('foo'), 'bar/' + entry));
+            }
+        }
+
+        let plugin = new Plugin('foo', 'entry', 'output', []);
+        let buildRequest = new BuildRequest(new CustomComponent(), plugin);
+
+        buildRequest.source.then(
+            (source) => {
+                test.same(source.code.toString(), 'foo');
+                test.same(source.path, 'bar/entry');
+
+                test.end();
+            }
+        );
     });
 
     test.end();

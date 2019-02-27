@@ -2,6 +2,7 @@ import {ComponentInterface} from "./ComponentInterface";
 import {PluginEOHandler, Plugin} from "./Plugin";
 import {Error} from "./Error";
 import {Binary} from "./Binary";
+import {Source} from "./Source";
 
 export class BuildRequest {
     readonly component: ComponentInterface;
@@ -46,6 +47,13 @@ export class BuildRequest {
         }
 
         return output;
+    }
+
+    /**
+     * @returns Promise<Source>
+     */
+    get source(): Promise<Source> {
+        return this.component.getSource(this.entry);
     }
 
     /**
