@@ -19,7 +19,8 @@
     "test": "npm run fastest",
     "fastest": "ts-node node_modules/tape/bin/tape 'test/**/test.ts' | tap-bail | tap-spec",
     "cover": "rimraf .nyc_output coverage && nyc npm t",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "doc": "typedoc --mode file --out docs --name Stromboli --excludePrivate --excludeNotExported src/lib"
   },
   "author": "Eric MORAND <eric.morand@gmail.com>",
   "dependencies": {
@@ -44,6 +45,7 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "ts-node": "^7.0.1",
+    "typedoc": "^0.14.2",
     "typescript": "^3.0.1"
   }
 }

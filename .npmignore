@@ -8,6 +8,7 @@
 /.coveralls.yml
 /.travis.yml
 /coverage
+/docs
 /package-lock.json
 /src
 /tasks

@@ -10,7 +10,7 @@ npm install stromboli --save-dev
 
 ## Basic usage
 
-```
+```javascript
 const {Builder, Plugin, ComponentFilesystem} = require('stromboli');
 
 let component = new ComponentFilesystem('bar');
@@ -63,26 +63,7 @@ builder.buildComponent(component, plugins).then(
 
 ## API
 
-### Binary
-
-### Builder
-
-* `buildComponent(component: ComponentInterface, plugins: Plugin[])`
-* `buildComponentWithPlugin(component: ComponentInterface, plugin: plugin)`
-
-### BuildRequest
-
-### ComponentFilesystem
-
-### ComponentInterface
-
-### Error
-
-### Plugin
-
-### ProcessorInterface
-
-### Source
+Read the [documentation](https://nightlycommit.github.io/stromboli) for more information.
 
 ## License
 
