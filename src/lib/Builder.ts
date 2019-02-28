@@ -2,9 +2,12 @@ import {ComponentInterface} from "./ComponentInterface";
 import {BuildRequest} from "./BuildRequest";
 import {Plugin} from "./Plugin";
 
+/**
+ * @class
+ */
 export class Builder {
     /**
-     * Build the component passed as parameters with the plugins passed as parameter and resolve with the processed build requests.
+     * Builds the component passed as parameter with the plugins passed as parameter and resolves with the processed build requests.
      *
      * @param component {ComponentInterface}
      * @param plugins {Plugin[]}
@@ -25,7 +28,7 @@ export class Builder {
     };
 
     /**
-     * Build the component passed as parameter with the plugin passed as parameter and resolve with the processed build request.
+     * Builds the component passed as parameter with the plugin passed as parameter and resolves with the processed build request.
      *
      * @param component {ComponentInterface}
      * @param plugin {Plugin}

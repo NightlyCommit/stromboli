@@ -1,6 +1,15 @@
 import * as sinon from 'sinon';
 
-import {Builder, BuildRequest, ComponentFilesystem, Plugin, ProcessorInterface} from '../../../../src';
+import {
+    Binary,
+    Builder,
+    BuildRequest,
+    ComponentInterface,
+    Error as StromboliError,
+    Plugin,
+    ProcessorInterface,
+    Source
+} from '../../../../src';
 import * as tape from 'tape';
 
 class FooProcessor {
@@ -9,12 +18,12 @@ class FooProcessor {
      * @return {Promise<void>}
      */
     process(buildRequest: BuildRequest) {
-        buildRequest.addBinary('bin1', new Buffer('bin1data'));
-        buildRequest.addBinary('bin2', new Buffer('bin2data'), new Buffer('bin2map'));
+        buildRequest.addBinary(new Binary('bin1', new Buffer('bin1data')));
+        buildRequest.addBinary(new Binary('bin2', new Buffer('bin2data'), new Buffer('bin2map')));
 
-        buildRequest.addDependency('dep1');
-        buildRequest.addDependency('dep2');
-        buildRequest.addDependency('dep3');
+        buildRequest.addDependency(new Source('dep1', 'dep1data'));
+        buildRequest.addDependency(new Source('dep2', 'dep2data'));
+        buildRequest.addDependency(new Source('dep3', 'dep3data'));
 
         return Promise.resolve();
     }
@@ -36,13 +45,15 @@ class ErrorProcessor implements ProcessorInterface {
      * @return {Promise<void>}
      */
     process(buildRequest: BuildRequest) {
-        buildRequest.addBinary('bin1', new Buffer('bin1data'));
+        return buildRequest.source.then(
+            (source) => {
+                buildRequest.addBinary(new Binary('bin1', new Buffer('bin1data')));
 
-        buildRequest.addDependency('dep1');
+                buildRequest.addDependency(new Source('dep1', 'dep1data'));
 
-        buildRequest.addError('err1file', 'err1message');
-
-        return Promise.resolve();
+                buildRequest.addError(new StromboliError('err1message', source, 1));
+            }
+        );
     }
 }
 
@@ -52,9 +63,17 @@ class ErrorProcessor2 {
      * @return {Promise<void>}
      */
     process(buildRequest: BuildRequest) {
-        buildRequest.addError('err2file', 'err2message');
+        return buildRequest.source.then(
+            (source) => {
+                buildRequest.addError(new StromboliError('err2message', source, 1));
+            }
+        );
+    }
+}
 
-        return Promise.resolve();
+class CustomComponent implements ComponentInterface {
+    getSource(entry: string): Promise<Source> {
+        return Promise.resolve(new Source('foo', 'bar'));
     }
 }
 
@@ -70,7 +89,7 @@ tape('Builder', (test) => {
     test.test('buildComponentWithPlugin', (test) => {
         let stromboli = new Builder();
 
-        let component = new ComponentFilesystem('foo');
+        let component = new CustomComponent();
         let plugin = new Plugin('plugin1', 'foo.entry', 'foo.output', [
             new FooProcessor(),
             new ErrorProcessor(),
@@ -84,8 +103,8 @@ tape('Builder', (test) => {
                 test.equals(result.binaries[1].name, 'bin1', 'binaries should be ordered');
                 test.equals(result.dependencies.length, 3, 'dependencies should be set and deduped');
                 test.equals(result.errors.length, 2, 'errors should be set');
-                test.equals(result.errors[0].file, 'err1file', 'errors should be ordered');
-                test.equals(result.errors[1].file, 'err2file', 'errors should be ordered');
+                test.equals(result.errors[0].message, 'err1message', 'errors should be ordered');
+                test.equals(result.errors[1].message, 'err2message', 'errors should be ordered');
 
                 test.end();
             }
@@ -157,7 +176,7 @@ tape('Builder', (test) => {
 
     test.test('buildComponent', (test) => {
         let builder = new Builder();
-        let component = new ComponentFilesystem('/foo');
+        let component = new CustomComponent();
 
         let plugins = [
             new Plugin('plugin1', 'foo.entry1', 'foo.output1', [

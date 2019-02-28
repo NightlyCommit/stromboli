@@ -18,7 +18,7 @@ tape('ComponentFilesystem', (test) => {
         let component = new ComponentFilesystem(path);
 
         component.getSource('index.txt').then((source) => {
-            test.looseEqual(source, new Source(Buffer.from('foo'), join(path, 'index.txt')));
+            test.looseEqual(source, new Source(join(path, 'index.txt'), Buffer.from('foo')));
 
             test.end();
         });
