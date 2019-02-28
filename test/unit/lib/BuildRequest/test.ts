@@ -16,35 +16,14 @@ tape('BuildRequest', (test) => {
     });
 
     test.test('addBinary', (test) => {
-        test.test('accept 2 parameters', (test) => {
-            let buildRequest = new BuildRequest(component, plugin);
+        let buildRequest = new BuildRequest(component, plugin);
+        let binary = new Binary('foo', Buffer.from('bar'));
 
-            buildRequest.addBinary('foo', Buffer.from('bar'));
+        buildRequest.addBinary(binary);
 
-            test.looseEqual(buildRequest.binaries[0], new Binary('foo', Buffer.from('bar')));
+        test.looseEqual(buildRequest.binaries[0], new Binary('foo', Buffer.from('bar')));
 
-            test.end();
-        });
-
-        test.test('accept 3 parameters', (test) => {
-            let buildRequest = new BuildRequest(component, plugin);
-
-            buildRequest.addBinary('foo', Buffer.from('bar'), Buffer.from('map'));
-
-            test.looseEqual(buildRequest.binaries[0], new Binary('foo', Buffer.from('bar'), Buffer.from('map')));
-
-            test.end();
-        });
-
-        test.test('accept 4 parameters', (test) => {
-            let buildRequest = new BuildRequest(component, plugin);
-
-            buildRequest.addBinary('foo', Buffer.from('bar'), Buffer.from('map'), ['dep']);
-
-            test.looseEqual(buildRequest.binaries[0], new Binary('foo', Buffer.from('bar'), Buffer.from('map'), ['dep']));
-
-            test.end();
-        });
+        test.end();
     });
 
     test.test('entry', (test) => {
@@ -102,7 +81,7 @@ tape('BuildRequest', (test) => {
     test.test('source', (test) => {
         class CustomComponent implements ComponentInterface {
             getSource(entry: string): Promise<Source> {
-                return Promise.resolve(new Source(Buffer.from('foo'), 'bar/' + entry));
+                return Promise.resolve(new Source('bar/' + entry, Buffer.from('foo')));
             }
         }
 
@@ -111,8 +90,8 @@ tape('BuildRequest', (test) => {
 
         buildRequest.source.then(
             (source) => {
-                test.same(source.code.toString(), 'foo');
-                test.same(source.path, 'bar/entry');
+                test.same(source.data.toString(), 'foo');
+                test.same(source.name, 'bar/entry');
 
                 test.end();
             }

@@ -64,6 +64,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>class</dt>
+						<dd></dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -83,20 +91,15 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="buildrequest.html#binaries" class="tsd-kind-icon">binaries</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="buildrequest.html#component" class="tsd-kind-icon">component</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="buildrequest.html#dependencies" class="tsd-kind-icon">dependencies</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="buildrequest.html#errors" class="tsd-kind-icon">errors</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="buildrequest.html#plugin" class="tsd-kind-icon">plugin</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#binaries" class="tsd-kind-icon">binaries</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#component" class="tsd-kind-icon">component</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#dependencies" class="tsd-kind-icon">dependencies</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#entry" class="tsd-kind-icon">entry</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#errors" class="tsd-kind-icon">errors</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#output" class="tsd-kind-icon">output</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#plugin" class="tsd-kind-icon">plugin</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="buildrequest.html#source" class="tsd-kind-icon">source</a></li>
 							</ul>
 						</section>
@@ -123,9 +126,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L12">BuildRequest.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L15">BuildRequest.ts:15</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>constructor</dt>
+									<dd></dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -133,6 +142,10 @@
 								</li>
 								<li>
 									<h5>plugin: <a href="plugin.html" class="tsd-signature-type">Plugin</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="buildrequest.html" class="tsd-signature-type">BuildRequest</a></h4>
@@ -141,60 +154,73 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="binaries" class="tsd-anchor"></a>
 					<h3>binaries</h3>
-					<div class="tsd-signature tsd-kind-icon">binaries<span class="tsd-signature-symbol">:</span> <a href="binary.html" class="tsd-signature-type">Binary</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L10">BuildRequest.ts:10</a></li>
-						</ul>
-					</aside>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> binaries<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="binary.html" class="tsd-signature-type">Binary</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L47">BuildRequest.ts:47</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the binaries built by the build request.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="binary.html" class="tsd-signature-type">Binary</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="component" class="tsd-anchor"></a>
 					<h3>component</h3>
-					<div class="tsd-signature tsd-kind-icon">component<span class="tsd-signature-symbol">:</span> <a href="../interfaces/componentinterface.html" class="tsd-signature-type">ComponentInterface</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L8">BuildRequest.ts:8</a></li>
-						</ul>
-					</aside>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> component<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/componentinterface.html" class="tsd-signature-type">ComponentInterface</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L33">BuildRequest.ts:33</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the component of the build request.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/componentinterface.html" class="tsd-signature-type">ComponentInterface</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="dependencies" class="tsd-anchor"></a>
 					<h3>dependencies</h3>
-					<div class="tsd-signature tsd-kind-icon">dependencies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L11">BuildRequest.ts:11</a></li>
-						</ul>
-					</aside>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> dependencies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="source.html" class="tsd-signature-type">Source</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L54">BuildRequest.ts:54</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the dependencies that were involved in the build of the binaries.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="source.html" class="tsd-signature-type">Source</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="errors" class="tsd-anchor"></a>
-					<h3>errors</h3>
-					<div class="tsd-signature tsd-kind-icon">errors<span class="tsd-signature-symbol">:</span> <a href="error.html" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L12">BuildRequest.ts:12</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="plugin" class="tsd-anchor"></a>
-					<h3>plugin</h3>
-					<div class="tsd-signature tsd-kind-icon">plugin<span class="tsd-signature-symbol">:</span> <a href="plugin.html" class="tsd-signature-type">Plugin</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L9">BuildRequest.ts:9</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="entry" class="tsd-anchor"></a>
 					<h3>entry</h3>
@@ -205,13 +231,37 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L25">BuildRequest.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L68">BuildRequest.ts:68</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the entry of the build request.</p>
+								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>string</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="errors" class="tsd-anchor"></a>
+					<h3>errors</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> errors<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="error.html" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L61">BuildRequest.ts:61</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the errors that were catch during the building of the binaries.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="error.html" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -225,13 +275,37 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L40">BuildRequest.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L84">BuildRequest.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the output of the build request.</p>
+								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>string</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="plugin" class="tsd-anchor"></a>
+					<h3>plugin</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> plugin<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="plugin.html" class="tsd-signature-type">Plugin</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L40">BuildRequest.ts:40</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the plugin of the build request.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="plugin.html" class="tsd-signature-type">Plugin</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -245,13 +319,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L55">BuildRequest.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L100">BuildRequest.ts:100</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convenient accessor that returns a promise that resolves to the source of the build request component.</p>
+								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="source.html" class="tsd-signature-type">Source</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Promise<Source></p>
 						</li>
 					</ul>
 				</section>
@@ -262,30 +338,24 @@
 					<a name="addbinary" class="tsd-anchor"></a>
 					<h3>add<wbr>Binary</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Binary<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span>, map<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Buffer</span>, dependencies<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Binary<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><a href="binary.html" class="tsd-signature-type">Binary</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L74">BuildRequest.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L122">BuildRequest.ts:122</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds a binary to the build request.</p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>data: <span class="tsd-signature-type">Buffer</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> map: <span class="tsd-signature-type">Buffer</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> dependencies: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>value: <a href="binary.html" class="tsd-signature-type">Binary</a></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -298,21 +368,24 @@
 					<a name="adddependency" class="tsd-anchor"></a>
 					<h3>add<wbr>Dependency</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Dependency<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Dependency<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><a href="source.html" class="tsd-signature-type">Source</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L62">BuildRequest.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L109">BuildRequest.ts:109</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds a dependency to the build request.</p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">string</span></h5>
+									<h5>value: <a href="source.html" class="tsd-signature-type">Source</a></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -325,24 +398,24 @@
 					<a name="adderror" class="tsd-anchor"></a>
 					<h3>add<wbr>Error</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Error<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Error<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><a href="error.html" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e4dd1c9/src/lib/BuildRequest.ts#L90">BuildRequest.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/NightlyCommit/stromboli/blob/e43a053/src/lib/BuildRequest.ts#L139">BuildRequest.ts:139</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds an error to the build request.</p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>file: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>message: <span class="tsd-signature-type">string</span></h5>
+									<h5>value: <a href="error.html" class="tsd-signature-type">Error</a></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -374,26 +447,26 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="buildrequest.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#binaries" class="tsd-kind-icon">binaries</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#component" class="tsd-kind-icon">component</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#dependencies" class="tsd-kind-icon">dependencies</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="buildrequest.html#errors" class="tsd-kind-icon">errors</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="buildrequest.html#plugin" class="tsd-kind-icon">plugin</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#entry" class="tsd-kind-icon">entry</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="buildrequest.html#errors" class="tsd-kind-icon">errors</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#output" class="tsd-kind-icon">output</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="buildrequest.html#plugin" class="tsd-kind-icon">plugin</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="buildrequest.html#source" class="tsd-kind-icon">source</a>

@@ -1,10 +1,12 @@
-import {Binary} from '../../../../src';
+import {Binary, Source} from '../../../../src';
 import * as tape from 'tape';
 
 tape('Binary', (test) => {
     let data = Buffer.from('bar');
     let map = Buffer.from('map');
-    let dependencies = ['foo'];
+    let dependencies = [
+        new Source('foo', 'fooData')
+    ];
 
     test.test('constructor', (test) => {
         test.test('accept 2 parameters', (test) => {

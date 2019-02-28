@@ -4,14 +4,26 @@ import {Source} from "../Source";
 import {join} from 'path';
 import {readFile} from 'fs';
 
+/**
+ * Component that resolves its source from the filesystem.
+ *
+ * @class
+ */
 export class ComponentFilesystem implements ComponentInterface {
-    readonly path: string;
+    private readonly _path: string;
 
     /**
-     * @param path {string}
+     * @param path {string} The name of the component
      */
     constructor(path: string) {
-        this.path = path;
+        this._path = path;
+    }
+
+    /**
+     * Return the name of the component.
+     */
+    get path(): string {
+        return this._path;
     }
 
     /**
@@ -27,7 +39,7 @@ export class ComponentFilesystem implements ComponentInterface {
                     reject(err);
                 }
                 else {
-                    resolve(new Source(data, fileName));
+                    resolve(new Source(fileName, data));
                 }
             });
         });

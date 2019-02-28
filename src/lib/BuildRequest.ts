@@ -1,33 +1,77 @@
 import {ComponentInterface} from "./ComponentInterface";
-import {PluginEOHandler, Plugin} from "./Plugin";
+import {Plugin, PluginEOHandler} from "./Plugin";
 import {Error} from "./Error";
 import {Binary} from "./Binary";
 import {Source} from "./Source";
 
+/**
+ * @class
+ */
 export class BuildRequest {
-    readonly component: ComponentInterface;
-    readonly plugin: Plugin;
-    readonly binaries: Binary[];
-    readonly dependencies: string[];
-    readonly errors: Error[];
+    private readonly _component: ComponentInterface;
+    private readonly _plugin: Plugin;
+    private readonly _binaries: Binary[];
+    private readonly _dependencies: Source[];
+    private readonly _errors: Error[];
 
+    /**
+     * @constructor
+     * @param component
+     * @param plugin
+     */
     constructor(component: ComponentInterface, plugin: Plugin) {
-        this.component = component;
-        this.plugin = plugin;
-        this.binaries = [];
-        this.dependencies = [];
-        this.errors = [];
+        this._component = component;
+        this._plugin = plugin;
+        this._binaries = [];
+        this._dependencies = [];
+        this._errors = [];
     }
 
     /**
-     * @returns string
+     * Returns the component of the build request.
+     */
+    get component(): ComponentInterface {
+        return this._component;
+    }
+
+    /**
+     * Returns the plugin of the build request.
+     */
+    get plugin(): Plugin {
+        return this._plugin;
+    }
+
+    /**
+     * Returns the binaries built by the build request.
+     */
+    get binaries(): Binary[] {
+        return this._binaries;
+    }
+
+    /**
+     * Returns the dependencies that were involved in the build of the binaries.
+     */
+    get dependencies(): Source[] {
+        return this._dependencies;
+    }
+
+    /**
+     * Returns the errors that were catch during the building of the binaries.
+     */
+    get errors(): Error[] {
+        return this._errors;
+    }
+
+    /**
+     * Returns the entry of the build request.
      */
     get entry(): string {
         let entry = null;
 
         if (typeof this.plugin.entry === 'function') {
             entry = (this.plugin.entry as PluginEOHandler)(this.component);
-        } else {
+        }
+        else {
             entry = this.plugin.entry;
         }
 
@@ -35,14 +79,15 @@ export class BuildRequest {
     }
 
     /**
-     * @returns string
+     * Returns the output of the build request.
      */
     get output(): string {
         let output = null;
 
         if (typeof this.plugin.output === 'function') {
             output = (this.plugin.output as PluginEOHandler)(this.component);
-        } else {
+        }
+        else {
             output = this.plugin.output;
         }
 
@@ -50,44 +95,48 @@ export class BuildRequest {
     }
 
     /**
-     * @returns Promise<Source>
+     * Convenient accessor that returns a promise that resolves to the source of the build request component.
      */
     get source(): Promise<Source> {
         return this.component.getSource(this.entry);
     }
 
     /**
-     * @param {string} value
+     * Adds a dependency to the build request.
+     *
+     * @param {Source} value
      */
-    addDependency(value: string) {
-        if (!this.dependencies.includes(value)) {
+    addDependency(value: Source): void {
+        if (!this.dependencies.find((source: Source): boolean => {
+            return source.name === value.name;
+        })) {
             this.dependencies.push(value);
         }
     }
 
     /**
-     * @param {string} name
-     * @param {Buffer} data
-     * @param {Buffer} map
-     * @param {string[]} dependencies
+     * Adds a binary to the build request.
+     *
+     * @param {Binary} value
      */
-    addBinary(name: string, data: Buffer, map?: Buffer, dependencies?: string[]) {
+    addBinary(value: Binary): void {
         let index = this.binaries.findIndex((binary): boolean => {
-            return (binary.name === name);
+            return (binary.name === value.name);
         });
 
         if (index > -1) {
             this.binaries.splice(index, 1);
         }
 
-        this.binaries.push(new Binary(name, data, map, dependencies));
+        this.binaries.push(value);
     }
 
     /**
-     * @param {string} file
-     * @param {string} message
+     * Adds an error to the build request.
+     *
+     * @param {Error} value
      */
-    addError(file: string, message: string) {
-        this.errors.push(new Error(file, message));
+    addError(value: Error): void {
+        this.errors.push(value);
     }
 }

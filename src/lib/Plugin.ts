@@ -4,10 +4,10 @@ import {ComponentInterface} from "./ComponentInterface";
 export type PluginEOHandler = (component: ComponentInterface) => string;
 
 export class Plugin {
-    readonly name: string;
-    readonly entry: string | PluginEOHandler;
-    readonly output: string | PluginEOHandler;
-    readonly processors: ProcessorInterface[];
+    private readonly _name: string;
+    private readonly _entry: string | PluginEOHandler;
+    private readonly _output: string | PluginEOHandler;
+    private readonly _processors: ProcessorInterface[];
 
     /**
      * @param name {string}
@@ -16,9 +16,25 @@ export class Plugin {
      * @param processors {ProcessorInterface[]}
      */
     constructor(name: string, entry: string | PluginEOHandler, output: string | PluginEOHandler, processors: ProcessorInterface[]) {
-        this.name = name;
-        this.entry = entry;
-        this.output = output;
-        this.processors = processors;
+        this._name = name;
+        this._entry = entry;
+        this._output = output;
+        this._processors = processors;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    get entry(): string | PluginEOHandler {
+        return this._entry;
+    }
+
+    get output(): string | PluginEOHandler {
+        return this._output;
+    }
+
+    get processors(): ProcessorInterface[] {
+        return this._processors;
     }
 }
