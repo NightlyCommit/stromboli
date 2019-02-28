@@ -1,6 +1,6 @@
 {
   "name": "stromboli",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "Simple yet powerful component builder",
   "main": "cjs/index.js",
   "module": "es/index.js",

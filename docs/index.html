@@ -64,59 +64,10 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 id="stromboli-npm-version-build-status-coverage-percentage">Stromboli <a href="https://npmjs.org/package/stromboli"><img src="https://badge.fury.io/js/stromboli.svg" alt="NPM version"></a> <a href="https://travis-ci.org/NightlyCommit/stromboli"><img src="https://travis-ci.org/NightlyCommit/stromboli.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/NightlyCommit/stromboli"><img src="https://coveralls.io/repos/github/NightlyCommit/stromboli/badge.svg" alt="Coverage percentage"></a></h1>
 				<blockquote>
-					<p>The simple yet efficient component builder</p>
+					<p>A simple library to create powerful builders</p>
 				</blockquote>
 				<h2 id="installation">Installation</h2>
 				<pre><code class="language-bash">npm install stromboli --save-dev</code></pre>
-				<h2 id="basic-usage">Basic usage</h2>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> {Builder, Plugin, ComponentFilesystem} = <span class="hljs-built_in">require</span>(<span class="hljs-string">'stromboli'</span>);
-
-<span class="hljs-keyword">let</span> component = <span class="hljs-keyword">new</span> ComponentFilesystem(<span class="hljs-string">'bar'</span>);
-
-<span class="hljs-keyword">let</span> plugins = [
-    <span class="hljs-keyword">new</span> Plugin(<span class="hljs-string">'foo_plugin'</span>, <span class="hljs-string">'foo.entry'</span>, <span class="hljs-string">'foo.output'</span>, [
-        {
-            process(buildRequest) {
-                <span class="hljs-keyword">return</span> buildRequest.component.getSource(buildRequest.plugin.entry).then(
-                    <span class="hljs-function">(<span class="hljs-params">source</span>) =&gt;</span> {
-                        buildRequest.addDependency(source.path);
-                        buildRequest.addBinary(buildRequest.plugin.output, Buffer.from(<span class="hljs-string">'binary data'</span>), Buffer.from(<span class="hljs-string">'source map'</span>), [<span class="hljs-string">'a binary dependency'</span>, <span class="hljs-string">'another binary dependency'</span>]);
-                    }
-                )
-            }
-        }
-    ])
-];
-
-<span class="hljs-keyword">let</span> builder = <span class="hljs-keyword">new</span> Builder();
-
-builder.buildComponent(component, plugins).then(
-    <span class="hljs-function">(<span class="hljs-params">buildRequests</span>) =&gt;</span> {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> [pluginName, buildRequest] <span class="hljs-keyword">of</span> buildRequests) {
-            <span class="hljs-built_in">console</span>.log(buildRequest);
-        }
-    }
-);
-
-<span class="hljs-comment">/**
- BuildRequest {
-  component: ComponentFilesystem {name},
-  plugin:
-   Plugin {
-     name: 'foo_plugin',
-     entry: 'foo.entry',
-     output: 'foo.output',
-     processors: [ [Object] ] },
-  binaries:
-   [ Binary {
-       name: 'foo.output',
-       data: &lt;Buffer 62 69 6e 61 72 79 20 64 61 74 61&gt;,
-       map: &lt;Buffer 73 6f 75 72 63 65 20 6d 61 70&gt;,
-       dependencies: [Array] } ],
-  dependencies: [ 'bar/foo.entry' ],
-  errors: [] }
-*/</span>
-</code></pre>
 				<h2 id="api">API</h2>
 				<p>Read the <a href="https://nightlycommit.github.io/stromboli">documentation</a> for more information.</p>
 				<h2 id="license">License</h2>
